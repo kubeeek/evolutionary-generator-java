@@ -1,38 +1,23 @@
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class ConfigReaderTest {
-    @BeforeEach
-    void setUp() {
-        mapDirection = MapDirection.SOUTH;
-    }
-
     @Test
-    void testNext() {
-        assertEquals(MapDirection.WEST, mapDirection.next());
-        mapDirection = MapDirection.WEST;
+    void testValidFilename() throws IOException {
+        var configReader = new ConfigReader("default");
+        var defaultProps = configReader.read();
 
-        assertEquals(MapDirection.NORTH, mapDirection.next());
-        mapDirection = MapDirection.NORTH;
-
-        assertEquals(MapDirection.EAST, mapDirection.next());
-        mapDirection = MapDirection.EAST;
-
-        assertEquals(MapDirection.SOUTH, mapDirection.next());
+        assertEquals(15, defaultProps.size());
     }
 
-    @Test
-    void testPrevious() {
-        assertEquals(MapDirection.EAST, mapDirection.previous());
-        mapDirection = MapDirection.EAST;
+    @Test()
+    void testInvalidFilename() {
+        var configReader = new ConfigReader("this_does_not_exist");
 
-        assertEquals(MapDirection.NORTH, mapDirection.previous());
-        mapDirection = MapDirection.NORTH;
-
-        assertEquals(MapDirection.WEST, mapDirection.previous());
-        mapDirection = MapDirection.WEST;
-
-        assertEquals(MapDirection.SOUTH, mapDirection.previous());
+        assertThrows(NullPointerException.class, configReader::read);
     }
-}
 }
