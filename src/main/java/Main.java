@@ -14,7 +14,7 @@ public class Main {
             e.printStackTrace();
         }
 
-        SimulationConfig simConfig = new SimulationConfig(prps);
+        SimulationConfig simConfig = new SimulationConfig(props);
         System.out.println(simConfig.getParameter("energy_start"));
     }
 }
