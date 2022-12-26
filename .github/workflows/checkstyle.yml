@@ -1,5 +1,5 @@
 name: reviewdog
-on: [pull_request, push, commit]
+on: [pull_request, push]
 jobs:
   checkstyle:
     name: runner / checkstyle
