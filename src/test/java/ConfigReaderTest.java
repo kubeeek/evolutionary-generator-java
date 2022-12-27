@@ -1,3 +1,4 @@
+
 import agh.ConfigReader;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +15,6 @@ public class ConfigReaderTest {
 
         assertEquals(15, defaultProps.size());
         assertEquals("50", defaultProps.getProperty("width"));
-
     }
 
     @Test()

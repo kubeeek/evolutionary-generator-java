@@ -68,5 +68,4 @@ public class SimulationConfigReaderIntegrationTest {
         SimulationConfig simulationConfig = new SimulationConfig(userConfigProps, defaultConfigProps);
         assertEquals("5", simulationConfig.getParameter("energy_reproduce_loss"));
     }
-
 }
