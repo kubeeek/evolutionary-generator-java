@@ -17,11 +17,11 @@ public class SimulationConfig {
     }
 
     private void validateDefaultConfig(Properties defaultProp) {
-        this.defaultProp = defaultProp;
-
         if (defaultProp.size() < this.expectedConfigPairs) {
             throw new IllegalArgumentException("Default config is invalid. Missing pairs.");
         }
+
+        this.defaultProp = defaultProp;
     }
 
     String getParameter(String key) {
