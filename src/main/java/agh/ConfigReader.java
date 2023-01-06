@@ -1,3 +1,5 @@
+package agh;
+
 import java.io.*;
 import java.util.Properties;
 
@@ -15,6 +17,10 @@ public class ConfigReader {
     public ConfigReader(String fileName) {
         this.fileName = fileName;
         this.filePath = null;
+    }
+
+    public ConfigReader(File file) {
+        this(String.valueOf(file.toPath()), null);
     }
 
     /**
@@ -40,13 +46,16 @@ public class ConfigReader {
     }
 
     /**
-     * Reads a config from the given path (absolute/relative?)
+     * Reads a config from the given path
      * @return Properties object
-     * @throws IOException
+     * @throws IOException If error occured during reading the file
      */
-    // TODO Implement the method. It is meant to load a file from given filepath. Given by the user in the GUI before the simulation start.
     private Properties readFromFilePath() throws IOException {
-        Properties appProp = null;
+        File file = new File(this.filePath);
+        FileInputStream fileInputStream = new FileInputStream(file);
+
+        Properties appProp = new Properties();
+        appProp.load(fileInputStream);
 
         return appProp;
     }
@@ -58,7 +67,7 @@ public class ConfigReader {
      * @throws NullPointerException Throws if the resource stream is null. So, ex. given file that does not exist.
      */
     private Properties readFromResources() throws IOException, NullPointerException {
-        InputStream fileInputStream = getClass().getClassLoader().getResourceAsStream(this.fileName + ".properties");
+        InputStream fileInputStream = getClass().getClassLoader().getResourceAsStream(this.fileName);
 
         Properties appProp = new Properties();
         appProp.load(fileInputStream);

@@ -1,3 +1,5 @@
+
+import agh.ConfigReader;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -8,10 +10,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class ConfigReaderTest {
     @Test
     void testValidFilename() throws IOException {
-        var configReader = new ConfigReader("default");
+        var configReader = new ConfigReader("default.properties");
         var defaultProps = configReader.read();
 
         assertEquals(15, defaultProps.size());
+        assertEquals("50", defaultProps.getProperty("width"));
     }
 
     @Test()
