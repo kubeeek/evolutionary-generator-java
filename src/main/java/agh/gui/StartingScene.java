@@ -2,12 +2,12 @@ package agh.gui;
 
 import agh.ConfigReader;
 import agh.SimulationConfig;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -23,20 +23,31 @@ public class StartingScene {
 
     private final Scene scene;
     private final Stage primaryStage;
-    private final ArrayList<TextField> inputs = new ArrayList<>();
-
+    private SimulationConfig simulationConfig = null;
 
     public StartingScene(Stage primaryStage) {
         this.primaryStage = primaryStage;
+        ConfigReader defaultConfigReader = new ConfigReader("default.properties");
 
-        VBox userInterface = createUserSelectInterface();
+        try {
+            var defaultProp = defaultConfigReader.read();
+            simulationConfig = new SimulationConfig(defaultProp);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
+
+        GridPane userInterface = createUserSelectInterface();
         Node form = createConfigFormInterface();
 
+
         this.scene = new Scene(new VBox(userInterface, form));
+        primaryStage.setMinWidth(800);
+        primaryStage.setMinHeight(600);
 
     }
 
-    private VBox createUserSelectInterface() {
+    private GridPane createUserSelectInterface() {
         Text inputField = new Text("Mozesz wczytac swoja konfiguracje ze wskazanego pliku. Jezeli pozostawisz pole puste, " + "symutlacja uruchomi sie z domyslna konfiguracja");
 
         Button configFileButton = new Button("Chce wczytac swoja konfiguracje");
@@ -45,36 +56,27 @@ public class StartingScene {
         configFileButton.setOnAction(e -> {
             File selectedFile = fileChooser.showOpenDialog(this.primaryStage);
             try {
-                if(selectedFile != null) load(selectedFile);
+                load(selectedFile);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
         });
 
-        VBox userInterface = new VBox(inputField, configFileButton);
-        userInterface.setSpacing(10);
+        GridPane userInterface = new GridPane();
+        userInterface.add(inputField, 0, 0);
+        userInterface.add(configFileButton, 0, 1);
+        GridPane.setHalignment(configFileButton, HPos.CENTER);
         userInterface.setPadding(new Insets(10));
+        userInterface.setVgap(10);
         userInterface.setAlignment(Pos.CENTER);
         return userInterface;
     }
 
     private Node createConfigFormInterface() {
-        var fields = FormFieldLabelMapping.getFields();
         GridPane container = new GridPane();
 
-        int rowIndex = 0;
-        for (var entry : fields.entrySet()) {
-            Label fieldLabel = new Label(entry.getValue());
-            TextField inputField = new TextField("");
-
-            inputField.setId(entry.getKey());
-
-            this.inputs.add(inputField);
-            container.add(fieldLabel, 0, rowIndex);
-            container.add(inputField, 2, rowIndex++);
-        }
-
-
+        ConfigForm.createForm(container);
+        ConfigForm.fill(this.simulationConfig);
         container.setPadding(new Insets(10));
         container.setAlignment(Pos.CENTER);
         container.setHgap(10);
@@ -84,14 +86,10 @@ public class StartingScene {
     private void load(File file) throws IOException {
         ConfigReader configReader = new ConfigReader(file);
 
-        var prop = configReader.read();
-        var simulationConfig = new SimulationConfig(prop);
+        var userProp = configReader.read();
+        this.simulationConfig.setUserConfig(userProp);
 
-        for (var element : inputs) {
-            System.out.print(element.getId() + " | ");
-            System.out.println(simulationConfig.getParameter(element.getId()));
-            element.setText(simulationConfig.getParameter(element.getId()));
-        }
+        ConfigForm.fill(this.simulationConfig);
     }
 
     public void setActive() {
