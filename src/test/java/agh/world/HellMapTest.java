@@ -1,3 +1,6 @@
+package agh.world;
+
+import agh.world.AbstractMapTest;
 import agh.world.HellMap;
 import org.junit.jupiter.api.BeforeEach;
 

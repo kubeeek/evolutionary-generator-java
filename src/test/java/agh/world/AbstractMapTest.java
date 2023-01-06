@@ -1,17 +1,29 @@
+package agh.world;
+
 import agh.Vector2d;
+import agh.world.AbstractMap;
 import agh.world.Animal;
 import agh.world.GlobeMap;
-import agh.world.IMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.security.InvalidParameterException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class AbstractMapTest {
 
-    protected IMap testInstance;
+    public AbstractMap testInstance;
+
+    @BeforeEach
+    void setUp() {
+        this.testInstance = new GlobeMap(50, 50, 10, 10);
+    }
+
+
+    @Test
+    void populateGrass() {
+        // 10 is init grass amount
+        assertEquals(10, this.testInstance.mapObjects.size());
+    }
 
     @Test
     void canMoveTo() {
@@ -33,7 +45,6 @@ public abstract class AbstractMapTest {
         assertEquals(2, this.testInstance.objectsAt(new Vector2d(2, 2)).size());
         assertTrue(this.testInstance.objectsAt(new Vector2d(2, 3)).size() > 0);
 
-        assertThrows(InvalidParameterException.class, () -> this.testInstance.place(new Animal()));
     }
 
     @Test

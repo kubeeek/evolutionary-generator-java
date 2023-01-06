@@ -1,10 +1,8 @@
-import agh.Vector2d;
-import agh.world.Animal;
+package agh.world;
+
+import agh.world.AbstractMapTest;
 import agh.world.GlobeMap;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class GlobeMapTest extends AbstractMapTest {
     @BeforeEach
