@@ -5,6 +5,8 @@ import agh.world.IMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.security.InvalidParameterException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class AbstractMapTest {
@@ -31,6 +33,7 @@ public abstract class AbstractMapTest {
         assertEquals(2, this.testInstance.objectsAt(new Vector2d(2, 2)).size());
         assertTrue(this.testInstance.objectsAt(new Vector2d(2, 3)).size() > 0);
 
+        assertThrows(InvalidParameterException.class, () -> this.testInstance.place(new Animal()));
     }
 
     @Test
