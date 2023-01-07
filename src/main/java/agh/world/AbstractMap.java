@@ -6,48 +6,47 @@ import agh.Vector2d;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.security.InvalidParameterException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 
 public abstract class AbstractMap implements IMap, PropertyChangeListener {
+    final int width;
+    final int height;
+    private final int dailyPlantGrowth;
+    final DeathTracker deathTracker;
+
     HashMap<Vector2d, LinkedHashSet<IGameObject>> mapObjects = new HashMap<>();
     LinkedHashSet<IGameObject> defaultValue = new LinkedHashSet<>();
 
-    private final int width;
-    private final int height;
-    private final int dailyPlantGrowth;
+    IGrassGenerator grassGenerator;
 
-    Vector2d lowerLeft = new Vector2d(10, 10);
-    Vector2d upperRight = new Vector2d(10, 10);
-
-
-    AbstractMap(int width, int height, int startPlantCount, int dailyPlantGrowth) {
+    AbstractMap(int width, int height, int startPlantCount, int dailyPlantGrowth, IGrassGenerator grassGenerator) {
         this.width = width;
         this.height = height;
 
         this.dailyPlantGrowth = dailyPlantGrowth;
+        this.grassGenerator = grassGenerator;
+        this.grassGenerator.setUp(this);
 
         this.populateGrass(startPlantCount);
+
+        this.deathTracker = new DeathTracker(this.height, this.width);
     }
 
-    private void populateGrass(int amount) {
-        for(int i = 0; i < amount; i++) {
-            this.createGrass();
+    public void populateGrass(int amount) {
+        for (int i = 0; i < amount; i++) {
+            var newGrass = this.grassGenerator.getNewGrass();
+            while (this.hasGrassAt(newGrass.getPosition())) {
+                newGrass = this.grassGenerator.getNewGrass();
+            }
+
+            this.place(newGrass);
         }
     }
 
     private void initializeKey(Vector2d key) {
         mapObjects.put(key, new LinkedHashSet<>());
-    }
-
-    private void createGrass() {
-        Random random = new Random();
-        Vector2d randomPosition = new Vector2d(random.nextInt(this.width), random.nextInt(this.height));
-
-        while (this.hasGrassAt(randomPosition)) {
-            randomPosition = new Vector2d(random.nextInt(this.width), random.nextInt(this.height));
-        }
-
-        this.place(new Grass(randomPosition));
     }
 
     private boolean hasGrassAt(Vector2d position) {
@@ -65,7 +64,7 @@ public abstract class AbstractMap implements IMap, PropertyChangeListener {
     public boolean place(IGameObject gameObject) throws InvalidParameterException {
         var position = gameObject.getPosition();
 
-        if(position == null)
+        if (position == null)
             throw new InvalidParameterException("Position cannot be null");
 
         return this.placeAt(position, gameObject);
@@ -85,7 +84,7 @@ public abstract class AbstractMap implements IMap, PropertyChangeListener {
 
     @Override
     public boolean placeAt(Vector2d position, IGameObject gameObject) {
-        if(mapObjects.get(position) == null)
+        if (mapObjects.get(position) == null)
             this.initializeKey(position);
 
         return mapObjects.get(position).add(gameObject);
@@ -93,17 +92,7 @@ public abstract class AbstractMap implements IMap, PropertyChangeListener {
 
     @Override
     public boolean deleteAt(Vector2d position, IGameObject gameObject) {
-       return mapObjects.getOrDefault(position, this.defaultValue).remove(gameObject);
-    }
-
-    @Override
-    public Vector2d getLowerLeft() {
-        return this.lowerLeft;
-    }
-
-    @Override
-    public Vector2d getUpperRight() {
-        return this.upperRight;
+        return mapObjects.getOrDefault(position, this.defaultValue).remove(gameObject);
     }
 
     @Override

@@ -68,18 +68,4 @@ public interface IMap {
      * @return Object or null if the position is not occupied.
      */
     boolean deleteAt(Vector2d position, IGameObject gameObject);
-
-    /**
-     * Get a lower-left corner of the map
-     *
-     * @return Vector2d object
-     */
-    Vector2d getLowerLeft();
-
-    /**
-     * Get a upper-right corner of the map
-     *
-     * @return Vector2d object
-     */
-    Vector2d getUpperRight();
 }

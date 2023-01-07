@@ -1,11 +1,17 @@
-package agh.gui;
+package agh.gui.form;
 
-import agh.SimulationConfigVariant;
+import agh.gui.form.elements.ChoiceVariantFormField;
+import agh.gui.form.elements.FormField;
+import agh.gui.form.elements.TextFormField;
+import agh.simulation.config.SimulationConfigVariant;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 
 import java.util.LinkedHashMap;
 
+/**
+ * Class to store the mappingsf from keys to proper FormFields. Keys are identic with the config's ones.
+ */
 public class FormFieldLabelMapping {
     static LinkedHashMap<String, FormField> formFields = new LinkedHashMap<>();
 
@@ -41,7 +47,7 @@ public class FormFieldLabelMapping {
         ));
     }
 
-    static LinkedHashMap<String, FormField> getFields() {
+    public static LinkedHashMap<String, FormField> getFields() {
         return formFields;
     }
 }

@@ -1,11 +1,9 @@
-package agh.gui;
+package agh.gui.form.elements;
 
-import agh.SimulationConfigVariant;
+import agh.gui.EnumStringParser;
 import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
-
-import java.util.Arrays;
 
 public class ChoiceVariantFormField<T extends Enum<T>> extends FormField {
     private final ChoiceBox<T> formField;
