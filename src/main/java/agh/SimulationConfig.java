@@ -26,7 +26,7 @@ public class SimulationConfig {
         this.defaultProp = defaultProp;
     }
 
-    void setUserConfig(Properties userProp) {
+    public void setUserConfig(Properties userProp) {
         this.userProp = userProp;
     }
 

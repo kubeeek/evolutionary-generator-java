@@ -1,0 +1,32 @@
+package agh.gui;
+
+import agh.SimulationConfigVariant;
+import javafx.collections.FXCollections;
+import javafx.scene.Node;
+import javafx.scene.control.ChoiceBox;
+
+import java.util.Arrays;
+
+public class ChoiceVariantFormField<T extends Enum<T>> extends FormField {
+    private final ChoiceBox<T> formField;
+
+    public ChoiceVariantFormField(String label, String key, ChoiceBox<T> formField, T[] values) {
+        super(label, key);
+        this.formField = formField;
+
+        formField.setItems(FXCollections.observableArrayList(values));
+        formField.setValue(values[0]);
+    }
+
+    @Override
+    public Node getField() {
+        return this.formField;
+    }
+
+    @Override
+    public void setValue(String value) {
+        var parser = new EnumStringParser(value);
+
+        this.formField.setValue((T) parser.getValue());
+    }
+}
