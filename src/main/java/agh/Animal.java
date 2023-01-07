@@ -6,7 +6,6 @@ import java.util.*;
 
 public class Animal extends AbstractGameObject {
     int age = 0;
-    boolean isDead = false;
     int countEatenGrass = 0;
     private Directions direction = Directions.getRandom();
 
@@ -38,7 +37,7 @@ public class Animal extends AbstractGameObject {
     }
 
     public void age() {
-        age++;
+        this.age++;
     }
 
     public int getEnergy() {
@@ -50,11 +49,7 @@ public class Animal extends AbstractGameObject {
     }
 
     public boolean isDead() {
-        if (getEnergy() <= 0) {
-            this.isDead = true;
-            return true;
-        }
-        return false;
+        return getEnergy() <= 0;
     }
 
     public int getCountEatenGrass() {
@@ -62,11 +57,11 @@ public class Animal extends AbstractGameObject {
     }
 
     public void addToCountEatenGrass() {
-        countEatenGrass++;
+        this.countEatenGrass++;
     }
 
     public void addChild() {
-        children++;
+        this.children++;
     }
 
     public int getChildrenAmount() {
@@ -88,7 +83,7 @@ public class Animal extends AbstractGameObject {
             }
         }
 
-        position.add(direction.toUnitVector());
+        this.position.add(direction.toUnitVector());
     }
     public int currentActiveGene(){
         return genePicker.getCurrentGeneIndex();
