@@ -9,4 +9,13 @@ public class Grass extends AbstractGameObject{
         return "P " + this.position.toString();
     }
 
+    @Override
+    public Vector2d getPosition() {
+        return null;
+    }
+
+    @Override
+    public void setPosition(Vector2d position) {
+
+    }
 }

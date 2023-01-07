@@ -1,5 +1,7 @@
 package agh.world;
 
+import agh.Animal;
+import agh.Grass;
 import agh.IGameObject;
 import agh.Vector2d;
 
@@ -36,7 +38,7 @@ public abstract class AbstractMap implements IMap, PropertyChangeListener {
 
     public void populateGrass(int amount) {
         for (int i = 0; i < amount; i++) {
-            var newGrass = this.grassGenerator.getNewGrass();
+            Grass newGrass = this.grassGenerator.getNewGrass();
             while (this.hasGrassAt(newGrass.getPosition())) {
                 newGrass = this.grassGenerator.getNewGrass();
             }

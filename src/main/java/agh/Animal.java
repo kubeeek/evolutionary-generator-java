@@ -6,7 +6,6 @@ import java.util.*;
 
 public class Animal extends AbstractGameObject {
     int age = 0;
-    boolean isDead = false;
     int countEatenGrass = 0;
     private Directions direction = Directions.getRandom();
 
@@ -18,14 +17,14 @@ public class Animal extends AbstractGameObject {
 
 //    private List<IAnimalObserver> observers = new ArrayList<>();
 
-    public Animal(IMap map, int energy, IGenePicker genePicker) {
+    public Animal(IMap map, int energy,Vector2d position, IGenePicker genePicker) {
         this.energy = energy;
         this.map = map;
         this.genotype = new Genotype();
         this.genePicker = genePicker;
         this.genePicker.setGenotype(this.genotype.getGenotype());
         Random random = new Random();
-        this.position = new Vector2d(random.nextInt(this.map.getUpperRight().x + 1), random.nextInt(this.map.getUpperRight().y + 1));
+        this.position = position;
     }
 
 
@@ -38,7 +37,7 @@ public class Animal extends AbstractGameObject {
     }
 
     public void age() {
-        age++;
+        this.age++;
     }
 
     public int getEnergy() {
@@ -50,11 +49,7 @@ public class Animal extends AbstractGameObject {
     }
 
     public boolean isDead() {
-        if (getEnergy() <= 0) {
-            this.isDead = true;
-            return true;
-        }
-        return false;
+        return getEnergy() <= 0;
     }
 
     public int getCountEatenGrass() {
@@ -62,11 +57,11 @@ public class Animal extends AbstractGameObject {
     }
 
     public void addToCountEatenGrass() {
-        countEatenGrass++;
+        this.countEatenGrass++;
     }
 
     public void addChild() {
-        children++;
+        this.children++;
     }
 
     public int getChildrenAmount() {
@@ -88,7 +83,7 @@ public class Animal extends AbstractGameObject {
             }
         }
 
-        position.add(direction.toUnitVector());
+        this.position.add(direction.toUnitVector());
     }
     public int currentActiveGene(){
         return genePicker.getCurrentGeneIndex();

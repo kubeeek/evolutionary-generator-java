@@ -1,5 +1,8 @@
 package agh.world;
 
+import agh.Grass;
+import agh.Vector2d;
+
 public class ToxicGravesGrassGenerator implements IGrassGenerator {
     private DeathTracker deathTracker;
 
@@ -8,7 +11,7 @@ public class ToxicGravesGrassGenerator implements IGrassGenerator {
         var sorted = this.deathTracker.getLeastGravePositions();
         var leastDeathsMapPosition = sorted.get(0);
 
-        return new Grass(leastDeathsMapPosition.x, leastDeathsMapPosition.y);
+        return new Grass(new Vector2d(leastDeathsMapPosition.x, leastDeathsMapPosition.y));
     }
 
     @Override
