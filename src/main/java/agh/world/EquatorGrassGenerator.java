@@ -31,7 +31,7 @@ public class EquatorGrassGenerator implements IGrassGenerator
             yPos = randomizer.nextInt(0, mapHeight);
         }
 
-        return new Grass(new Vector2d(2, 2));
+        return new Grass(new Vector2d(xPos, yPos));
     }
 
     @Override
