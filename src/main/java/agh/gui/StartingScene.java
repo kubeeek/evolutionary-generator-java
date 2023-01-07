@@ -22,6 +22,7 @@ public class StartingScene {
 
     private final Scene scene;
     private final Stage primaryStage;
+
     private SimulationConfig simulationConfig = null;
 
     public StartingScene(Stage primaryStage) {
