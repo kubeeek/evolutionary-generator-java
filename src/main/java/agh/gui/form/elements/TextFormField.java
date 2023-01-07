@@ -1,4 +1,4 @@
-package agh.gui;
+package agh.gui.form.elements;
 
 import javafx.scene.Node;
 import javafx.scene.control.TextField;

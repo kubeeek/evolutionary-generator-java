@@ -1,4 +1,4 @@
-package agh;
+package agh.simulation.config;
 
 public class SimulationConfigVariant {
     public enum AnimalBehavior {

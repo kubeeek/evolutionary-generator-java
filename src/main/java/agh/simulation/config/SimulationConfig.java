@@ -1,4 +1,4 @@
-package agh;
+package agh.simulation.config;
 
 import java.util.Properties;
 

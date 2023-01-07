@@ -1,16 +1,19 @@
-package agh.gui;
+package agh.gui.form;
 
-import agh.SimulationConfig;
+import agh.simulation.config.SimulationConfig;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
 import java.util.ArrayList;
 
+/**
+ *
+ */
 public class ConfigForm {
     static ArrayList<Node> fieldsxd = new ArrayList<>();
 
-    static void createForm(GridPane container) {
+    public static void createForm(GridPane container) {
         var fields = FormFieldLabelMapping.getFields();
 
         int row = 0;
