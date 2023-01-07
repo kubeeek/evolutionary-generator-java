@@ -1,6 +1,6 @@
 package agh.gui;
 
-import agh.SimulationConfigVariant;
+import agh.simulation.config.SimulationConfigVariant;
 
 import java.lang.constant.Constable;
 
@@ -8,11 +8,11 @@ public class EnumStringParser {
 
     private final String val;
 
-    EnumStringParser(String value) {
+    public EnumStringParser(String value) {
         this.val = value;
     }
 
-    Constable getValue() {
+    public Constable getValue() {
         if(val.equals("LITTLE_CRAZY") || val.equals("FULL_PREDISPOSITION"))
             return SimulationConfigVariant.AnimalBehavior.valueOf(this.val);
         if(val.equals("EQUATOR") || val.equals("TOXIC_GRAVES"))

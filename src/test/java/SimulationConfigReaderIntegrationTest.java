@@ -1,5 +1,5 @@
 import agh.ConfigReader;
-import agh.SimulationConfig;
+import agh.simulation.config.SimulationConfig;
 import jdk.jfr.Description;
 import org.junit.jupiter.api.Test;
 
@@ -31,8 +31,6 @@ public class SimulationConfigReaderIntegrationTest {
     @Test()
     void testInvalidDefaultConfig() throws IOException {
         var configReader = new ConfigReader("invalid_default.properties");
-        Properties defaultProps = new Properties();
-
         var props = configReader.read();
 
 
