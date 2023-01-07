@@ -1,5 +1,6 @@
 package agh.world;
 
+import agh.Animal;
 import agh.Vector2d;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class DeathTracker {
     }
 
     void countAnimal(Animal deadAnimal) {
-        if (!deadAnimal.isDead)
+        if (!deadAnimal.isDead())
             throw new IllegalArgumentException("Dead animal is not dead.");
 
         addGrave(deadAnimal.getPosition());
