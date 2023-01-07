@@ -12,5 +12,9 @@ public abstract class AbstractGenePicker implements IGenePicker {
     public void setGenotype(ArrayList<Integer> genotype) {
         this.genotype = genotype;
     }
+    @Override
+    public int getCurrentGeneIndex(){
+        return currentGeneIndex;
+    }
 
 }

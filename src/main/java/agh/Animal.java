@@ -4,16 +4,18 @@ import agh.world.IMap;
 
 import java.util.*;
 
-public class Animal {
+public class Animal extends AbstractGameObject {
     int age = 0;
+    boolean isDead = false;
+    int countEatenGrass = 0;
     private Directions direction = Directions.getRandom();
-    int energy;
+
     IMap map;
-    int death = -1;
-    private Genotype genotype;
+    int deathDate = -1;
+    private final Genotype genotype;
     private int children = 0;
-    private IGenePicker genePicker;
-    public Vector2d position;
+    private final IGenePicker genePicker;
+
 //    private List<IAnimalObserver> observers = new ArrayList<>();
 
     public Animal(IMap map, int energy, IGenePicker genePicker) {
@@ -23,13 +25,9 @@ public class Animal {
         this.genePicker = genePicker;
         this.genePicker.setGenotype(this.genotype.getGenotype());
         Random random = new Random();
-        this.position = new Vector2d(random.nextInt(this.map.getUpperRight().x + 1),
-                random.nextInt(this.map.getUpperRight().y + 1));
+        this.position = new Vector2d(random.nextInt(this.map.getUpperRight().x + 1), random.nextInt(this.map.getUpperRight().y + 1));
     }
 
-    public int getEnergy() {
-        return energy;
-    }
 
     public void decreaseEnergy(int energy) {
         this.energy -= energy;
@@ -41,6 +39,30 @@ public class Animal {
 
     public void age() {
         age++;
+    }
+
+    public int getEnergy() {
+        return this.energy;
+    }
+
+    public void setEnergy(int energy) {
+        this.energy = energy;
+    }
+
+    public boolean isDead() {
+        if (getEnergy() <= 0) {
+            this.isDead = true;
+            return true;
+        }
+        return false;
+    }
+
+    public int getCountEatenGrass() {
+        return this.countEatenGrass;
+    }
+
+    public void addToCountEatenGrass() {
+        countEatenGrass++;
     }
 
     public void addChild() {
@@ -68,13 +90,22 @@ public class Animal {
 
         position.add(direction.toUnitVector());
     }
+    public int currentActiveGene(){
+        return genePicker.getCurrentGeneIndex();
+    }
 
     public ArrayList<Integer> getGenotype() {
         return this.genotype.getGenotype();
     }
 
-    public Vector2d getPosition() {
-        return this.position;
+    public void die(int day) {
+//        this.cell.removeElement(this);
+//        this.map.removeElement(this);
+        this.deathDate = day;
+    }
+
+    public int getAge() {
+        return this.age;
     }
 
 //    private void changePosition(Vector2d oldPosition, Vector2d newPosition) {
