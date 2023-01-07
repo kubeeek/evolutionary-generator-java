@@ -1,5 +1,8 @@
 package agh.world;
 
+import agh.Grass;
+import agh.Vector2d;
+
 import java.util.Random;
 
 public class EquatorGrassGenerator implements IGrassGenerator
@@ -28,7 +31,7 @@ public class EquatorGrassGenerator implements IGrassGenerator
             yPos = randomizer.nextInt(0, mapHeight);
         }
 
-        return new Grass(xPos, yPos);
+        return new Grass(new Vector2d(2, 2));
     }
 
     @Override
