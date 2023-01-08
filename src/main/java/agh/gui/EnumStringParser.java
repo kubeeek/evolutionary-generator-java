@@ -13,9 +13,9 @@ public class EnumStringParser {
     }
 
     public Constable getValue() {
-        if(val.equals("LITTLE_CRAZY") || val.equals("FULL_PREDISPOSITION") ||val.equals("FULL_PREDISPOSITION") ||val.equals("FULL_PREDISPOSITION") )
+        if(val.equals("LITTLE_CRAZY") || val.equals("FULL_PREDISPOSITION"))
             return SimulationConfigVariant.AnimalBehavior.valueOf(this.val);
-        if(val.equals("EQUATOR") || val.equals("TOXIC_GRAVES") || val.equals("Toksyczne trupy") || val.equals(""))
+        if(val.equals("EQUATOR") || val.equals("TOXIC_GRAVES"))
             return SimulationConfigVariant.PlantGrowth.valueOf(this.val);
         if(val.equals("RANDOM") || val.equals("CORRECTED"))
             return SimulationConfigVariant.Mutation.valueOf(this.val);

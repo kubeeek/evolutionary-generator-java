@@ -1,6 +1,7 @@
 package agh.gui.form;
 
 import agh.simulation.config.SimulationConfig;
+import agh.simulation.config.SimulationConfigVariant;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
@@ -49,7 +50,19 @@ public class ConfigForm {
         for (var entry : fields.entrySet()) {
             var field = entry.getValue();
 
-            simulationConfig.setParameter(field.key, field.getValue());
+            var value = field.getValue();
+
+            // ugly code :(
+            if (value instanceof SimulationConfigVariant.AnimalBehavior)
+                simulationConfig.setParameter(field.key, ((SimulationConfigVariant.AnimalBehavior) field.getValue()).name());
+            else if (value instanceof SimulationConfigVariant.PlantGrowth)
+                simulationConfig.setParameter(field.key, ((SimulationConfigVariant.PlantGrowth) field.getValue()).name());
+            else if (value instanceof SimulationConfigVariant.Mutation)
+                simulationConfig.setParameter(field.key, ((SimulationConfigVariant.Mutation) field.getValue()).name());
+            else if (value instanceof SimulationConfigVariant.MapLoop)
+                simulationConfig.setParameter(field.key, ((SimulationConfigVariant.MapLoop) field.getValue()).name());
+            else
+                simulationConfig.setParameter(field.key, (String) field.getValue());
         }
     }
 }

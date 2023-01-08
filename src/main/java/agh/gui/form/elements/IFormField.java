@@ -5,9 +5,9 @@ import javafx.scene.Node;
 /**
  * Interface for embedding the JavaFX's form elements
  */
-public interface IFormField {
+public interface IFormField<T> {
 
     Node getField();
     void setValue(String value);
-    String getValue();
+    T getValue();
 }

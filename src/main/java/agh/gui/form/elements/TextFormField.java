@@ -3,7 +3,7 @@ package agh.gui.form.elements;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 
-public class TextFormField extends FormField {
+public class TextFormField<T> extends FormField {
     TextField formField;
 
     public TextFormField(String label, String key, TextField formField) {
