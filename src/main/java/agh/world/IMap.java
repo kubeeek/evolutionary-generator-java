@@ -66,4 +66,8 @@ public interface IMap {
     int getHeight();
 
     int getWidth();
+
+    Vector2d getRandomPosition();
+
+    public void populateGrass();
 }

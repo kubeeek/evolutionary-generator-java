@@ -18,4 +18,5 @@ public abstract class AbstractGameObject implements IGameObject{
         this.position=position;
     }
 
+
 }

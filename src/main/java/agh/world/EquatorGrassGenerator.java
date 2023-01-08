@@ -3,6 +3,7 @@ package agh.world;
 import agh.Grass;
 import agh.Vector2d;
 
+import java.security.InvalidParameterException;
 import java.util.Random;
 
 public class EquatorGrassGenerator implements IGrassGenerator
@@ -13,10 +14,9 @@ public class EquatorGrassGenerator implements IGrassGenerator
     int equator;
     int equatorHeight;
 
-    EquatorGrassGenerator(int equatorHeight) {
+    public EquatorGrassGenerator(int equatorHeight) {
         this.randomizer = new Random();
         this.equatorHeight = equatorHeight;
-
     }
 
     @Override
@@ -40,6 +40,9 @@ public class EquatorGrassGenerator implements IGrassGenerator
         this.mapWidth = map.getWidth();
 
         this.equator = mapHeight/2;
+
+        if(this.equator - this.equatorHeight < 0)
+            throw new InvalidParameterException("Equator height is too large. Exceeds the lower limit of 0.");
 
     }
 }

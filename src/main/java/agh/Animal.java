@@ -1,5 +1,6 @@
 package agh;
 
+import agh.simulation.config.SimulationConfigVariant;
 import agh.world.IMap;
 
 import java.util.*;
@@ -10,59 +11,130 @@ public class Animal extends AbstractGameObject {
     private Directions direction = Directions.getRandom();
     private ArrayList<IPositionChangeObserver> observers = new ArrayList<>();
     IMap map;
-    int energyUsedToReproduce=50;
+    int energyUsedToReproduce;
+    int energyUsedToMove = 1;
+    int energyGainedFromEating;
+    int mutationMax;
+    int mutationMin;
     int deathDate = -1;
+    int energyNeededToBorn;
+    SimulationConfigVariant.Mutation mutationType;
     private final Genotype genotype;
     private int children = 0;
     private final IGenePicker genePicker;
 
-    public Animal(IMap map, int energy,Vector2d position, IGenePicker genePicker) {
+    //Animal przy inicjacji
+    public Animal(
+            IMap map,
+            int energy,
+            Vector2d position,
+            IGenePicker genePicker,
+            int lengthOfGenotype,
+            int energyGainedFromEating,
+            int energyUsedToReproduce,
+            int mutationMin,
+            int mutationMax,
+            int energyNeededToBorn,
+            SimulationConfigVariant.Mutation mutationType
+    ) {
         this.energy = energy;
-        this.map = map;
-        this.genotype = new Genotype();
+        this.energyUsedToReproduce = energyUsedToReproduce;
+        this.energyGainedFromEating = energyGainedFromEating;
+        this.energyNeededToBorn=energyNeededToBorn;
+
+
+        this.genotype = new Genotype(lengthOfGenotype);
         this.genePicker = genePicker;
         this.genePicker.setGenotype(this.genotype.getGenotype());
+
+        this.mutationMin = mutationMin;
+        this.mutationMax = mutationMax;
+        this.mutationType = mutationType;
+
         this.position = position;
+        this.map = map;
     }
-    public Animal(Animal mom,Animal dad){
-        this.position=dad.getPosition();
-        this.genotype=new Genotype(mom,dad);
-        this.genePicker=dad.genePicker;
+
+    //Animal Dziecko
+    public Animal(Animal mom, Animal dad) {
+        //Energia
+        this.energyGainedFromEating = dad.energyGainedFromEating;
+        this.energyUsedToReproduce = dad.energyUsedToReproduce;
+        this.energyNeededToBorn=dad.energyNeededToBorn;
+        this.energy = getEnergyFromParents(dad, mom);
+        //Mutacja
+        this.mutationMin = dad.mutationMin;
+        this.mutationMax = dad.mutationMax;
+        this.mutationType = dad.mutationType;
+        mutateGene();
+        //Genotyp
+        this.genotype = new Genotype(mom, dad);
+        this.genePicker = dad.genePicker;
         this.genePicker.setGenotype(this.genotype.getGenotype());
         this.genePicker.setRandomCurrentIndex();
-        this.map= dad.map;
-        this.energy=getEnergyFromParents(dad,mom);
+        //Polozenie
+        this.map = dad.map;
+        this.position = dad.getPosition();
+
         dad.addChild();
         mom.addChild();
     }
-    public Animal(IMap map, int energy,Vector2d position, IGenePicker genePicker,IPositionChangeObserver observer) {
-        this(map,energy,position,genePicker);
+
+    //Animal - dodanie observera
+    public Animal(
+            IMap map,
+            int startEnergy,
+            Vector2d position,
+            IGenePicker genePicker,
+            int lengthOfGenotype,
+            int energyGainedFromEating,
+            int energyUsedToReproduce,
+            int mutationMin,
+            int mutationMax,
+            int energyNeededToBorn,
+            SimulationConfigVariant.Mutation mutationType,
+            IPositionChangeObserver observer
+            ) {
+        this(map, startEnergy, position, genePicker, lengthOfGenotype, energyGainedFromEating
+                , energyUsedToReproduce, mutationMin, mutationMax,energyNeededToBorn, mutationType);
         addObserver(observer);
+    }
+
+    public void mutateGene() {
+        if (this.mutationType == SimulationConfigVariant.Mutation.CORRECTED) {
+            this.genotype.mutatePlusOne(this.mutationMin, this.mutationMax);
+        } else {
+            this.genotype.mutateRandom(this.mutationMin, this.mutationMax);
+        }
     }
 
     public void addObserver(IPositionChangeObserver observer) {
         this.observers.add(observer);
     }
+
     public void removeObserver(IPositionChangeObserver observer) {
         this.observers.remove(observer);
     }
-    public void decreaseEnergy(int energy) {
-        this.energy -= energy;
+
+    public void decreaseEnergy() {
+        this.energy -= energyUsedToMove;
     }
 
-    public void increaseEnergy(int energy) {
-        this.energy += energy;
+    public void increaseEnergy() {
+        this.energy += energyGainedFromEating;
     }
-    private int getEnergyFromParents(Animal dad, Animal mom){
-        int parentsEnergy= dad.getEnergy()+mom.getEnergy();
-        int dadEnergyUsed = (int) Math.ceil(energyUsedToReproduce*(1.0*dad.getEnergy()/parentsEnergy)); // 1.0 is used to cast dad's energy into double
-        int momEnergyUsed = energyUsedToReproduce*(mom.getEnergy()/parentsEnergy);
 
-        dad.setEnergy(dad.getEnergy()-dadEnergyUsed);
-        mom.setEnergy(mom.getEnergy()-momEnergyUsed);
+    private int getEnergyFromParents(Animal dad, Animal mom) {
+        int parentsEnergy = dad.getEnergy() + mom.getEnergy();
+        int dadEnergyUsed = (int) Math.ceil(energyUsedToReproduce * (1.0 * dad.getEnergy() / parentsEnergy)); // 1.0 is used to cast dad's energy into double
+        int momEnergyUsed = energyUsedToReproduce * (mom.getEnergy() / parentsEnergy);
+
+        dad.setEnergy(dad.getEnergy() - dadEnergyUsed);
+        mom.setEnergy(mom.getEnergy() - momEnergyUsed);
 
         return momEnergyUsed + dadEnergyUsed;
     }
+
     public void addAge() {
         this.age++;
     }
@@ -110,9 +182,16 @@ public class Animal extends AbstractGameObject {
             }
         }
 
-        this.position.add(direction.toUnitVector());
+
+        var oldPosition = this.getPosition();
+        var newPosition = this.position.add(direction.toUnitVector());
+
+        positionChanged(oldPosition, newPosition);
+
+        decreaseEnergy();
     }
-    public int currentActiveGene(){
+
+    public int currentActiveGene() {
         return genePicker.getCurrentGeneIndex();
     }
 
@@ -130,10 +209,19 @@ public class Animal extends AbstractGameObject {
         return this.age;
     }
 
-    private void changePosition(Vector2d oldPosition, Vector2d newPosition) {
+    private void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
         for (IPositionChangeObserver observer : this.observers) {
             observer.positionChanged(this, oldPosition, newPosition);
         }
+    }
+    public boolean isReadyToBorn(){
+        return getEnergy()>=this.energyNeededToBorn;
+    }
+    public String toString(){
+        return "kierunek "+direction.toString()+" pozycja "+getPosition().toString()+" genotyp "+genotype.toString();
+    }
+    public int getEnergyNeededToBorn(){
+        return this.energyNeededToBorn;
     }
 
 
