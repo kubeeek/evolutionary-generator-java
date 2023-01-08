@@ -6,17 +6,13 @@ import agh.Vector2d;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public abstract class AbstractMapTest {
+public class AbstractMapTest {
 
     public AbstractMap testInstance;
 
@@ -29,18 +25,21 @@ public abstract class AbstractMapTest {
     @BeforeEach
     public void setup() {
         // mock dependencies
-        ArrayDeque<Grass> mockedGrasses = new ArrayDeque<>();
+        ArrayList<Grass> mockedGrasses = new ArrayList<>();
 
         this.grassGeneratorMock = Mockito.mock(IGrassGenerator.class);
         var mockedGrass = Mockito.mock(Grass.class, withSettings().useConstructor(new Vector2d(5, 5)));
-        mockedGrasses.addLast(mockedGrass);
+        mockedGrasses.add(mockedGrass);
         Mockito.when(mockedGrass.getPosition()).thenReturn(new Vector2d(5, 5));
 
         mockedGrass = Mockito.mock(Grass.class, withSettings().useConstructor(new Vector2d(10, 5)));
-        mockedGrasses.addLast(mockedGrass);
+        mockedGrasses.add(mockedGrass);
         Mockito.when(mockedGrass.getPosition()).thenReturn(new Vector2d(10, 5));
 
-        Mockito.when(grassGeneratorMock.getNewGrass()).thenAnswer((Answer<Grass>) invocation -> mockedGrasses.poll());
+        Mockito.when(grassGeneratorMock.getNewGrass())
+                .thenReturn(mockedGrasses.get(0))
+                .thenReturn(mockedGrasses.get(1))
+                .thenReturn(null);
 
         this.testInstance = new GlobeMap(50, 50, 2, 10, this.grassGeneratorMock);
 
