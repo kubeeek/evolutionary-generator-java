@@ -27,4 +27,10 @@ public class ChoiceVariantFormField<T extends Enum<T>> extends FormField {
 
         this.formField.setValue((T) parser.getValue());
     }
+
+    @Override
+    public String getValue() {
+        return (String) new EnumStringParser(this.formField.getValue().toString()).getValue();
+    }
 }
+

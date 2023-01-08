@@ -9,4 +9,5 @@ public interface IFormField {
 
     Node getField();
     void setValue(String value);
+    String getValue();
 }

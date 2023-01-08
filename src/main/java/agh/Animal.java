@@ -238,4 +238,8 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
 
         this.setEnergy(this.energy + this.energyGainedFromEating);
     }
+    @Override
+    public String toImagePath() {
+        return "src/main/resources/szczur.png";
+    }
 }

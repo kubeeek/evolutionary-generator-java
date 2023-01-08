@@ -34,12 +34,22 @@ public class ConfigForm {
         container.setVgap(5);
     }
 
-    public static void fill(SimulationConfig simulationConfig) {
+    public static void fillForm(SimulationConfig simulationConfig) {
         var fields = FormFieldLabelMapping.getFields();
         for (var entry : fields.entrySet()) {
             var field = entry.getValue();
 
             field.setValue(simulationConfig.getParameter(field.key));
+        }
+    }
+
+    public static void fillConfig(SimulationConfig simulationConfig) {
+        var fields = FormFieldLabelMapping.getFields();
+
+        for (var entry : fields.entrySet()) {
+            var field = entry.getValue();
+
+            simulationConfig.setParameter(field.key, field.getValue());
         }
     }
 }

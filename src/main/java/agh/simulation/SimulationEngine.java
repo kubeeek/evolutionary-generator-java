@@ -141,4 +141,8 @@ public class SimulationEngine {
 //
 //        loop();
     }
+
+    public IMap getMap() {
+        return this.map;
+    }
 }

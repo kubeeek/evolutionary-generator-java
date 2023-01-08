@@ -25,5 +25,6 @@ public class Main {
 
         var engine = new SimulationEngine(simulationConfig);
         engine.start();
+        Application.launch(App.class, args);
     }
 }

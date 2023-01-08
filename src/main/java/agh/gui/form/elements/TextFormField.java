@@ -19,4 +19,9 @@ public class TextFormField extends FormField {
     public Node getField() {
         return this.formField;
     }
+
+    @Override
+    public String getValue() {
+        return this.formField.getText();
+    }
 }
