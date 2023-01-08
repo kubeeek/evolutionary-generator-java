@@ -7,9 +7,9 @@ import java.util.Random;
 
 public class EquatorGrassGenerator implements IGrassGenerator
 {
-    private final Random randomizer;
-    private int mapWidth = 0;
-    private int mapHeight = 0;
+    Random randomizer;
+    int mapWidth = 0;
+    int mapHeight = 0;
     int equator;
     int equatorHeight;
 
@@ -36,8 +36,8 @@ public class EquatorGrassGenerator implements IGrassGenerator
 
     @Override
     public void setUp(AbstractMap map) {
-        this.mapHeight = map.height;
-        this.mapWidth = map.width;
+        this.mapHeight = map.getHeight();
+        this.mapWidth = map.getWidth();
 
         this.equator = mapHeight/2;
 

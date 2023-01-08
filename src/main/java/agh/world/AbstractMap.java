@@ -16,7 +16,7 @@ public abstract class AbstractMap implements IMap, PropertyChangeListener {
     final int width;
     final int height;
     private final int dailyPlantGrowth;
-    final DeathTracker deathTracker;
+    DeathTracker deathTracker;
 
     HashMap<Vector2d, LinkedHashSet<IGameObject>> mapObjects = new HashMap<>();
     LinkedHashSet<IGameObject> defaultValue = new LinkedHashSet<>();
@@ -100,5 +100,13 @@ public abstract class AbstractMap implements IMap, PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
 
+    }
+
+    public int getWidth() {
+        return this.width;
+    }
+
+    public int getHeight() {
+        return this.height;
     }
 }
