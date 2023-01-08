@@ -69,5 +69,7 @@ public interface IMap {
 
     Vector2d getRandomPosition();
 
-    public void populateGrass();
+    void populateGrass();
+
+
 }

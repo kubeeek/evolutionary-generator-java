@@ -139,7 +139,5 @@ public abstract class AbstractMap implements IMap, IPositionChangeObserver {
 
         object.setPosition(newPosition);
         this.place(object);
-
-        // handle eat & birth
     }
 }

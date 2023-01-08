@@ -131,7 +131,7 @@ public class SimulationEngine {
 ////            return;
 //        System.out.println("tick");
 //
-//        SimulationTick tick = new SimulationTick(animals, map);
+//        SimulationTick tick = new SimulationTick(animals, map, heatlhyStatus);
 //        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 //
 //        executorService.shutdown();

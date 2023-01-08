@@ -5,11 +5,11 @@ import agh.world.IMap;
 
 import java.util.*;
 
-public class Animal extends AbstractGameObject {
+public class Animal extends AbstractGameObject implements Comparable<Animal> {
     int age = 0;
     int countEatenGrass = 0;
     private Directions direction = Directions.getRandom();
-    private ArrayList<IPositionChangeObserver> observers = new ArrayList<>();
+    private final ArrayList<IPositionChangeObserver> observers = new ArrayList<>();
     IMap map;
     int energyUsedToReproduce;
     int energyUsedToMove = 1;
@@ -225,4 +225,17 @@ public class Animal extends AbstractGameObject {
     }
 
 
+    @Override
+    public int compareTo(Animal o) {
+        return Comparator.comparing(Animal::getEnergy)
+                .thenComparing(Animal::getAge)
+                .thenComparing(Animal::getChildrenAmount)
+                .compare(this, o);
+    }
+
+    public void eat(Grass grass) {
+        this.map.deleteAt(grass.getPosition(), grass);
+
+        this.setEnergy(this.energy + this.energyGainedFromEating);
+    }
 }

@@ -9,10 +9,12 @@ public class SimulationTick implements Runnable {
 
     private final ArrayList<Animal> animals;
     private final IMap map;
+    private final int healthyStatus;
 
-    SimulationTick(ArrayList<Animal> animals, IMap map) {
+    SimulationTick(ArrayList<Animal> animals, IMap map, int healthyStatus) {
         this.animals = animals;
         this.map = map;
+        this.healthyStatus = healthyStatus;
     }
 
     /**
@@ -36,12 +38,15 @@ public class SimulationTick implements Runnable {
             // rotate them & make a move
             animal.move();
 
-            // eat and make children
         }
 
+        // eat
+        (new DinnerConflictResolver(map, animals)).resolve();
+
+        // make children
+        (new ChildMakingResolver(map, animals, healthyStatus)).resolve();
 
         // grow new plants
         this.map.populateGrass();
-
     }
 }
