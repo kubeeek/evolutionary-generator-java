@@ -35,14 +35,6 @@ public abstract class AbstractMap implements IMap, PropertyChangeListener {
 
         this.deathTracker = new DeathTracker(this.height, this.width);
     }
-    @Override
-    public int getHeight(){
-        return this.height;
-    }
-    @Override
-    public int getWidth(){
-        return this.width;
-    }
 
     public void populateGrass(int amount) {
         for (int i = 0; i < amount; i++) {
