@@ -8,14 +8,13 @@ public class Animal extends AbstractGameObject {
     int age = 0;
     int countEatenGrass = 0;
     private Directions direction = Directions.getRandom();
-
+    private ArrayList<IPositionChangeObserver> observers = new ArrayList<>();
     IMap map;
+    int energyUsedToReproduce=50;
     int deathDate = -1;
     private final Genotype genotype;
     private int children = 0;
     private final IGenePicker genePicker;
-
-//    private List<IAnimalObserver> observers = new ArrayList<>();
 
     public Animal(IMap map, int energy,Vector2d position, IGenePicker genePicker) {
         this.energy = energy;
@@ -23,11 +22,30 @@ public class Animal extends AbstractGameObject {
         this.genotype = new Genotype();
         this.genePicker = genePicker;
         this.genePicker.setGenotype(this.genotype.getGenotype());
-        Random random = new Random();
         this.position = position;
     }
+    public Animal(Animal mom,Animal dad){
+        this.position=dad.getPosition();
+        this.genotype=new Genotype(mom,dad);
+        this.genePicker=dad.genePicker;
+        this.genePicker.setGenotype(this.genotype.getGenotype());
+        this.genePicker.setRandomCurrentIndex();
+        this.map= dad.map;
+        this.energy=getEnergyFromParents(dad,mom);
+        dad.addChild();
+        mom.addChild();
+    }
+    public Animal(IMap map, int energy,Vector2d position, IGenePicker genePicker,IPositionChangeObserver observer) {
+        this(map,energy,position,genePicker);
+        addObserver(observer);
+    }
 
-
+    public void addObserver(IPositionChangeObserver observer) {
+        this.observers.add(observer);
+    }
+    public void removeObserver(IPositionChangeObserver observer) {
+        this.observers.remove(observer);
+    }
     public void decreaseEnergy(int energy) {
         this.energy -= energy;
     }
@@ -35,8 +53,17 @@ public class Animal extends AbstractGameObject {
     public void increaseEnergy(int energy) {
         this.energy += energy;
     }
+    private int getEnergyFromParents(Animal dad, Animal mom){
+        int parentsEnergy= dad.getEnergy()+mom.getEnergy();
+        int dadEnergyUsed = (int) Math.ceil(energyUsedToReproduce*(1.0*dad.getEnergy()/parentsEnergy)); // 1.0 is used to cast dad's energy into double
+        int momEnergyUsed = energyUsedToReproduce*(mom.getEnergy()/parentsEnergy);
 
-    public void age() {
+        dad.setEnergy(dad.getEnergy()-dadEnergyUsed);
+        mom.setEnergy(mom.getEnergy()-momEnergyUsed);
+
+        return momEnergyUsed + dadEnergyUsed;
+    }
+    public void addAge() {
         this.age++;
     }
 
@@ -69,7 +96,7 @@ public class Animal extends AbstractGameObject {
     }
 
     public void move() {
-        this.age += 1;
+        addAge();
         int gene = this.genePicker.getNextGene();
         switch (gene) {
             case 1 -> this.direction = this.direction.next();
@@ -103,11 +130,11 @@ public class Animal extends AbstractGameObject {
         return this.age;
     }
 
-//    private void changePosition(Vector2d oldPosition, Vector2d newPosition) {
-//        for (IAnimalObserver observer : this.observers) {
-//            observer.positionChanged(this, oldPosition, newPosition);
-//        }
-//    }
+    private void changePosition(Vector2d oldPosition, Vector2d newPosition) {
+        for (IPositionChangeObserver observer : this.observers) {
+            observer.positionChanged(this, oldPosition, newPosition);
+        }
+    }
 
 
 }

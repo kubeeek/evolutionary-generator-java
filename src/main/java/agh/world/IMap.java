@@ -68,4 +68,6 @@ public interface IMap {
      * @return Object or null if the position is not occupied.
      */
     boolean deleteAt(Vector2d position, IGameObject gameObject);
+    public int getHeight();
+    public int getWidth();
 }
