@@ -66,6 +66,21 @@ public class AbstractMapTest {
     }
 
     @Test
+    void testHasFreeSpaceForGrass() {
+        // Test that there is free space for grass when map is empty
+        assertTrue(this.testInstance.hasFreeSpaceForGrass());
+
+        // Test that there is free space for grass when map is not full
+        for (int i = 0; i < this.testInstance.getWidth() * this.testInstance.getHeight() - 1; i++) {
+          //  assertTrue(this.testInstance.hasFreeSpaceForGrass());
+            this.testInstance.place(new Grass(new Vector2d(i, i)));
+        }
+
+        // Test that there is no free space for grass when map is full
+        assertFalse(this.testInstance.hasFreeSpaceForGrass());
+    }
+
+    @Test
     void place() {
         var result = this.testInstance.place(animal1);
         this.testInstance.place(animal2);
