@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class DeathTracker {
-    private final HashMap<Vector2d, Integer> deathsOnMap;
+    final HashMap<Vector2d, Integer> deathsOnMap;
 
     DeathTracker(int mapHeight, int mapWidth) {
         this.deathsOnMap = new HashMap<>();
