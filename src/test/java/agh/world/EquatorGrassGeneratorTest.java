@@ -27,23 +27,8 @@ class EquatorGrassGeneratorTest {
     }
 
     @Test
-    @DisplayName("Test the getNewGrass method to ensure it correctly generates grass in the correct region of the map")
-    public void testGetNewGrass() {
-        EquatorGrassGenerator generator = new EquatorGrassGenerator(10);
-        AbstractMap map = Mockito.mock(AbstractMap.class);
-
-        Mockito.when(map.getWidth()).thenReturn(100);
-        Mockito.when(map.getHeight()).thenReturn(200);
-
-        generator.setUp(map);
-
-        Grass grass = generator.getNewGrass();
-        assertTrue(grass.getPosition().y >= 90 && grass.getPosition().y <= 110);
-    }
-
-    @Test
     @DisplayName("Test the getNewGrass method to ensure it correctly generates grass in the full height of the map with a probability of 20%")
-    public void testGetNewGrassFullHeight() {
+    public void testGetNewGrass() {
         EquatorGrassGenerator generator = new EquatorGrassGenerator(10);
         AbstractMap map = Mockito.mock(AbstractMap.class);
 

@@ -17,4 +17,8 @@ public abstract class AbstractGenePicker implements IGenePicker {
         return currentGeneIndex;
     }
 
+    @Override
+    public void setRandomCurrentIndex(){
+        this.currentGeneIndex=random.nextInt(8);
+    }
 }

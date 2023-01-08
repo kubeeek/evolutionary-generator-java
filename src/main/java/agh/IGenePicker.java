@@ -8,4 +8,5 @@ public interface IGenePicker {
 
     void setGenotype(ArrayList<Integer> genotype);
     public int getCurrentGeneIndex();
+    public void setRandomCurrentIndex();
 }
