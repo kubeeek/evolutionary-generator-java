@@ -8,5 +8,4 @@ public class Grass extends AbstractGameObject{
     public String toString() {
         return "P " + this.position.toString();
     }
-
 }

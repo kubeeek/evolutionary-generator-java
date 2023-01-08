@@ -3,7 +3,7 @@ package agh.world;
 import agh.IGameObject;
 import agh.Vector2d;
 
-;import java.util.ArrayList;
+import java.util.ArrayList;
 
 /**
  * The interface responsible for interacting with the map of the world.
@@ -16,8 +16,7 @@ public interface IMap {
     /**
      * Indicate if any object can move to the given position.
      *
-     * @param position
-     *            The position checked for the movement possibility.
+     * @param position The position checked for the movement possibility.
      * @return True if the object can move to that position.
      */
     boolean canMoveTo(Vector2d position);
@@ -25,8 +24,7 @@ public interface IMap {
     /**
      * Place a animal on the map.
      *
-     * @param animal
-     *            The animal to place on the map.
+     * @param animal The animal to place on the map.
      * @return True if the animal was placed. The animal cannot be placed if the map is already occupied.
      */
     boolean place(IGameObject animal);
@@ -36,8 +34,7 @@ public interface IMap {
      * confused with canMove since there might be empty positions where the animal
      * cannot move.
      *
-     * @param position
-     *            Position to check.
+     * @param position Position to check.
      * @return True if the position is occupied.
      */
     boolean isOccupied(Vector2d position);
@@ -45,8 +42,7 @@ public interface IMap {
     /**
      * Return an object at a given position.
      *
-     * @param position
-     *            The position of the object.
+     * @param position The position of the object.
      * @return Array of objects or empty if the position is not occupied.
      */
     ArrayList<IGameObject> objectsAt(Vector2d position);
@@ -54,8 +50,7 @@ public interface IMap {
     /**
      * Place an object at a given position.
      *
-     * @param position
-     *            The position of the object.
+     * @param position The position of the object.
      * @return Object or null if the position is not occupied.
      */
     boolean placeAt(Vector2d position, IGameObject gameObject);
@@ -63,11 +58,12 @@ public interface IMap {
     /**
      * Delete an object at a given position.
      *
-     * @param position
-     *            The position of the object.
+     * @param position The position of the object.
      * @return Object or null if the position is not occupied.
      */
     boolean deleteAt(Vector2d position, IGameObject gameObject);
-    public int getHeight();
-    public int getWidth();
+
+    int getHeight();
+
+    int getWidth();
 }

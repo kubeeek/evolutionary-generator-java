@@ -16,7 +16,7 @@ public abstract class AbstractMap implements IMap, PropertyChangeListener {
     final int width;
     final int height;
     private final int dailyPlantGrowth;
-    final DeathTracker deathTracker;
+    DeathTracker deathTracker;
 
     HashMap<Vector2d, LinkedHashSet<IGameObject>> mapObjects = new HashMap<>();
     LinkedHashSet<IGameObject> defaultValue = new LinkedHashSet<>();
@@ -46,6 +46,10 @@ public abstract class AbstractMap implements IMap, PropertyChangeListener {
 
     public void populateGrass(int amount) {
         for (int i = 0; i < amount; i++) {
+
+            if(!hasFreeSpaceForGrass())
+                return;
+
             Grass newGrass = this.grassGenerator.getNewGrass();
             while (this.hasGrassAt(newGrass.getPosition())) {
                 newGrass = this.grassGenerator.getNewGrass();
@@ -53,6 +57,21 @@ public abstract class AbstractMap implements IMap, PropertyChangeListener {
 
             this.place(newGrass);
         }
+    }
+
+    boolean hasFreeSpaceForGrass() {
+        if(this.mapObjects.size() < this.height * this.width)
+            return true;
+
+        for (var entry :
+                this.mapObjects.entrySet()) {
+            var positionKey = entry.getKey();
+
+            if(!hasGrassAt(positionKey))
+                return true;
+        }
+
+        return false;
     }
 
     private void initializeKey(Vector2d key) {
@@ -108,5 +127,13 @@ public abstract class AbstractMap implements IMap, PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
 
+    }
+
+    public int getWidth() {
+        return this.width;
+    }
+
+    public int getHeight() {
+        return this.height;
     }
 }
