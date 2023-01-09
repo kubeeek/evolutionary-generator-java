@@ -4,11 +4,9 @@ import agh.*;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 
 public abstract class AbstractMap implements IMap, IPositionChangeObserver {
@@ -17,8 +15,8 @@ public abstract class AbstractMap implements IMap, IPositionChangeObserver {
     private final int dailyPlantGrowth;
     GraveyardTracker graveyardTracker;
 
-    ConcurrentHashMap<Vector2d, CopyOnWriteArrayList<IGameObject>> mapObjects = new ConcurrentHashMap<>();
-    CopyOnWriteArrayList<IGameObject> defaultValue = new CopyOnWriteArrayList<>();
+    ConcurrentHashMap<Vector2d, LinkedHashSet<IGameObject>> mapObjects = new ConcurrentHashMap<>();
+    LinkedHashSet<IGameObject> defaultValue = new LinkedHashSet<>();
 
 
     IGrassGenerator grassGenerator;
@@ -36,14 +34,6 @@ public abstract class AbstractMap implements IMap, IPositionChangeObserver {
         this.grassGenerator.setUp(this);
 
         this.populateGrass(startPlantCount);
-    }
-
-    public void populateGrass() {
-        this.populateGrass(this.dailyPlantGrowth);
-    }
-    @Override
-    public HashMap<Vector2d, LinkedHashSet<IGameObject>> getMapObjects(){
-        return mapObjects;
     }
 
     public void populateGrass() {
@@ -81,7 +71,7 @@ public abstract class AbstractMap implements IMap, IPositionChangeObserver {
     }
 
     private void initializeKey(Vector2d key) {
-        mapObjects.put(key, new CopyOnWriteArrayList<>());
+        mapObjects.put(key, new LinkedHashSet<>());
     }
 
     private synchronized boolean hasGrassAt(Vector2d position) {
@@ -147,20 +137,12 @@ public abstract class AbstractMap implements IMap, IPositionChangeObserver {
     }
 
     @Override
+    public ConcurrentHashMap<Vector2d, LinkedHashSet<IGameObject>> getMapObjects() {
+        return mapObjects;
+    }
+
+    @Override
     public synchronized void positionChanged(IGameObject object, Vector2d oldPosition, Vector2d newPosition) {
-        this.deleteAt(oldPosition, object);
-
-        object.setPosition(newPosition);
-        this.place(object);
-    }
-
-    @Override
-    public Vector2d getRandomPosition() {
-        return new Vector2d(random.nextInt(this.width), random.nextInt(this.height));
-    }
-
-    @Override
-    public void positionChanged(IGameObject object, Vector2d oldPosition, Vector2d newPosition) {
         this.deleteAt(oldPosition, object);
 
         object.setPosition(newPosition);
