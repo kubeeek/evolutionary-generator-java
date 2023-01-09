@@ -71,12 +71,13 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
         this.mutationMin = dad.mutationMin;
         this.mutationMax = dad.mutationMax;
         this.mutationType = dad.mutationType;
-        mutateGene();
         //Genotyp
+
         this.genotype = new Genotype(mom, dad);
         this.genePicker = dad.genePicker;
         this.genePicker.setGenotype(this.genotype.getGenotype());
         this.genePicker.setRandomCurrentIndex();
+        mutateGene(getGenotype());
         //Polozenie
         this.map = dad.map;
         this.position = dad.getPosition();
@@ -106,11 +107,11 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
         addObserver(observer);
     }
 
-    public void mutateGene() {
+    public void mutateGene(ArrayList<Integer> genotype) {
         if (this.mutationType == SimulationConfigVariant.Mutation.CORRECTED) {
-            this.genotype.mutatePlusOne(this.mutationMin, this.mutationMax);
+            this.genotype.mutatePlusOne(this.mutationMin, this.mutationMax,genotype);
         } else {
-            this.genotype.mutateRandom(this.mutationMin, this.mutationMax);
+            this.genotype.mutateRandom(this.mutationMin, this.mutationMax,genotype);
         }
     }
 
@@ -133,7 +134,7 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
     private int getEnergyFromParents(Animal dad, Animal mom) {
         int parentsEnergy = dad.getEnergy() + mom.getEnergy();
         int dadEnergyUsed = (int) Math.ceil(energyUsedToReproduce * (1.0 * dad.getEnergy() / parentsEnergy)); // 1.0 is used to cast dad's energy into double
-        int momEnergyUsed = energyUsedToReproduce * (mom.getEnergy() / parentsEnergy);
+        int momEnergyUsed = (int) Math.floor(energyUsedToReproduce * (1.0* mom.getEnergy() / parentsEnergy));
 
         dad.setEnergy(dad.getEnergy() - dadEnergyUsed);
         mom.setEnergy(mom.getEnergy() - momEnergyUsed);
