@@ -14,7 +14,7 @@ public abstract class AbstractMap implements IMap, IPositionChangeObserver {
     private final int dailyPlantGrowth;
     DeathTracker deathTracker;
 
-    HashMap<Vector2d, LinkedHashSet<IGameObject>> mapObjects = new HashMap<>();
+    public HashMap<Vector2d, LinkedHashSet<IGameObject>> mapObjects = new HashMap<>();
     LinkedHashSet<IGameObject> defaultValue = new LinkedHashSet<>();
 
     IGrassGenerator grassGenerator;
@@ -31,6 +31,10 @@ public abstract class AbstractMap implements IMap, IPositionChangeObserver {
         this.populateGrass(startPlantCount);
 
         this.deathTracker = new DeathTracker(this.height, this.width);
+    }
+    @Override
+    public HashMap<Vector2d, LinkedHashSet<IGameObject>> getMapObjects(){
+        return mapObjects;
     }
 
     public void populateGrass() {
