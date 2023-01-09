@@ -8,4 +8,8 @@ public class Grass extends AbstractGameObject{
     public String toString() {
         return "P " + this.position.toString();
     }
+    @Override
+    public String toImagePath() {
+       return "src/main/resources/trawa.png";}
+
 }

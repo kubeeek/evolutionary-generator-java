@@ -1,27 +1,24 @@
 package agh.world;
 
-import agh.Animal;
-import agh.Grass;
-import agh.IGameObject;
-import agh.Vector2d;
+import agh.*;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Random;
 
-public abstract class AbstractMap implements IMap, PropertyChangeListener {
+public abstract class AbstractMap implements IMap, IPositionChangeObserver {
     final int width;
     final int height;
     private final int dailyPlantGrowth;
     DeathTracker deathTracker;
 
-    HashMap<Vector2d, LinkedHashSet<IGameObject>> mapObjects = new HashMap<>();
+    public HashMap<Vector2d, LinkedHashSet<IGameObject>> mapObjects = new HashMap<>();
     LinkedHashSet<IGameObject> defaultValue = new LinkedHashSet<>();
 
     IGrassGenerator grassGenerator;
+    Random random = new Random();
 
     AbstractMap(int width, int height, int startPlantCount, int dailyPlantGrowth, IGrassGenerator grassGenerator) {
         this.width = width;
@@ -35,11 +32,19 @@ public abstract class AbstractMap implements IMap, PropertyChangeListener {
 
         this.deathTracker = new DeathTracker(this.height, this.width);
     }
+    @Override
+    public HashMap<Vector2d, LinkedHashSet<IGameObject>> getMapObjects(){
+        return mapObjects;
+    }
 
-    public void populateGrass(int amount) {
+    public void populateGrass() {
+        this.populateGrass(this.dailyPlantGrowth);
+    }
+
+    protected void populateGrass(int amount) {
         for (int i = 0; i < amount; i++) {
 
-            if(!hasFreeSpaceForGrass())
+            if (!hasFreeSpaceForGrass())
                 return;
 
             Grass newGrass = this.grassGenerator.getNewGrass();
@@ -51,15 +56,15 @@ public abstract class AbstractMap implements IMap, PropertyChangeListener {
         }
     }
 
-    boolean hasFreeSpaceForGrass() {
-        if(this.mapObjects.size() < this.height * this.width)
+    protected boolean hasFreeSpaceForGrass() {
+        if (this.mapObjects.size() < this.height * this.width)
             return true;
 
         for (var entry :
                 this.mapObjects.entrySet()) {
             var positionKey = entry.getKey();
 
-            if(!hasGrassAt(positionKey))
+            if (!hasGrassAt(positionKey))
                 return true;
         }
 
@@ -113,12 +118,10 @@ public abstract class AbstractMap implements IMap, PropertyChangeListener {
 
     @Override
     public boolean deleteAt(Vector2d position, IGameObject gameObject) {
+        if (gameObject instanceof Animal && ((Animal) gameObject).isDead())
+            deathTracker.countAnimal((Animal) gameObject);
+
         return mapObjects.getOrDefault(position, this.defaultValue).remove(gameObject);
-    }
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-
     }
 
     public int getWidth() {
@@ -127,5 +130,18 @@ public abstract class AbstractMap implements IMap, PropertyChangeListener {
 
     public int getHeight() {
         return this.height;
+    }
+
+    @Override
+    public Vector2d getRandomPosition() {
+        return new Vector2d(random.nextInt(this.width), random.nextInt(this.height));
+    }
+
+    @Override
+    public void positionChanged(IGameObject object, Vector2d oldPosition, Vector2d newPosition) {
+        this.deleteAt(oldPosition, object);
+
+        object.setPosition(newPosition);
+        this.place(object);
     }
 }

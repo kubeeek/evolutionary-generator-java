@@ -33,4 +33,8 @@ public class SimulationConfig {
     public String getParameter(String key) {
         return this.userProp.getProperty(key, this.defaultProp.getProperty(key));
     }
+
+    public void setParameter(String key, String value) {
+        this.userProp.setProperty(key, value);
+    }
 }

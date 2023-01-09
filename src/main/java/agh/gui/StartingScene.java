@@ -3,6 +3,8 @@ package agh.gui;
 import agh.ConfigReader;
 import agh.simulation.config.SimulationConfig;
 import agh.gui.form.ConfigForm;
+import agh.world.IMap;
+import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -14,6 +16,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.scene.shape.Rectangle;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +25,6 @@ public class StartingScene {
 
     private final Scene scene;
     private final Stage primaryStage;
-
     private SimulationConfig simulationConfig = null;
 
     public StartingScene(Stage primaryStage) {
@@ -39,11 +41,12 @@ public class StartingScene {
 
         GridPane userInterface = createUserSelectInterface();
         Node form = createConfigFormInterface();
+        VBox startSimulation = getStartSimulationButton();
 
 
-        this.scene = new Scene(new VBox(userInterface, form));
-        primaryStage.setMinWidth(800);
-        primaryStage.setMinHeight(600);
+        this.scene = new Scene(new VBox(userInterface, form, startSimulation));
+        primaryStage.setMinWidth(WindowConstant.FORM_WIDTH);
+        primaryStage.setMinHeight(WindowConstant.FORM_HEIGHT);
 
     }
 
@@ -71,17 +74,53 @@ public class StartingScene {
         userInterface.setAlignment(Pos.CENTER);
         return userInterface;
     }
+    private VBox getStartSimulationButton() {
+        startButton.setOnAction(click -> {
+            ConfigForm.fillConfig(this.simulationConfig);
+            new SimulationScene(this.simulationConfig);
+
+        });
+        VBox vbox = new VBox(startButton);
+        vbox.setAlignment(Pos.CENTER);
+        startButton.setAlignment(Pos.CENTER);
+
+        return vbox;
+    }   Button startButton = new Button("Start Simulation");
+
+    ////////////////////// Stworzenie przycisku i otwieranie sie nowych okien
+    private void openNewStageWithGrid() {
+        final int SIZE = 30;
+        final int WIDTH = 400;
+        final int HEIGHT = 400;
+
+        GridPane grid = new GridPane();
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                Rectangle rect = new Rectangle(SIZE, SIZE);
+                rect.setStrokeWidth(1);
+                rect.setStroke(javafx.scene.paint.Color.YELLOW);
+                grid.add(rect, col, row);
+            }
+        }
+
+        Stage stage = new Stage();
+        stage.setTitle("New Stage with Grid");
+        stage.setScene(new Scene(grid, WIDTH, HEIGHT));
+        stage.show();
+    }
+    //////////////////////
 
     private Node createConfigFormInterface() {
         GridPane container = new GridPane();
 
         ConfigForm.createForm(container);
-        ConfigForm.fill(this.simulationConfig);
+        ConfigForm.fillForm(this.simulationConfig);
         container.setPadding(new Insets(10));
         container.setAlignment(Pos.CENTER);
         container.setHgap(10);
         return container;
     }
+
 
     private void load(File file) throws IOException {
         ConfigReader configReader = new ConfigReader(file);
@@ -89,7 +128,7 @@ public class StartingScene {
         var userProp = configReader.read();
         this.simulationConfig.setUserConfig(userProp);
 
-        ConfigForm.fill(this.simulationConfig);
+        ConfigForm.fillForm(this.simulationConfig);
     }
 
     public void setActive() {

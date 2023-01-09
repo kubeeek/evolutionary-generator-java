@@ -21,6 +21,7 @@ public class EnumStringParser {
             return SimulationConfigVariant.Mutation.valueOf(this.val);
         if(val.equals("GLOBE") || val.equals("HELL_PORTAL"))
             return SimulationConfigVariant.MapLoop.valueOf(this.val);
-        return null;
+
+        throw new RuntimeException("Invalid string-enum parse");
     }
 }

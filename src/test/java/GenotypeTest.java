@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class GenotypeTest {
     @Test
     public void testGenotypeConstructorNoArgs() {
-        Genotype genotype = new Genotype();
+        Genotype genotype = new Genotype(8);
         assertEquals(8, genotype.genotype.size());
         for (int i : genotype.genotype) {
             assertTrue(i >= 0 && i <= 7);
@@ -24,7 +24,7 @@ public class GenotypeTest {
         ArrayList<Integer> genotypeInput = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7));
         Genotype genotype = new Genotype(genotypeInput);
         genotype.random.setSeed(1234);
-        genotype.MutateRandom();
+        genotype.mutateRandom(1,4);
         ArrayList<Integer> testGenomes = new ArrayList<>(Arrays.asList(1, 6, 7, 3, 2, 5, 6, 7));
         assertEquals(testGenomes, genotype.getGenotype());
     }
@@ -35,8 +35,7 @@ public class GenotypeTest {
         ArrayList<Integer> genotypeInput = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7));
         Genotype genotype = new Genotype(genotypeInput);
         genotype.random.setSeed(1234);
-        genotype.MutatePlusOne();
-        System.out.print(genotype.getGenotype());
+        genotype.mutatePlusOne(1,4);
         ArrayList<Integer> testGenomes = new ArrayList<>(Arrays.asList(0, 0, 3, 2, 4, 5, 5, 6));
         assertEquals(testGenomes, genotype.getGenotype());
     }

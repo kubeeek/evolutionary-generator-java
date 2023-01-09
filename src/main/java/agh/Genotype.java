@@ -2,21 +2,22 @@ package agh;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class Genotype {
-    public int lengthOfGenotype = 8;
-    public int mutationMax = 4;
-    public int mutationMin = 1;
+    public int lengthOfGenotype;
     public ArrayList<Integer> genotype = new ArrayList<>();
     public final Random random = new Random();
 
-    public Genotype() {
-        for (int i = 0; i < lengthOfGenotype; i++) {
+    public Genotype(int lengthOfGenotype) {
+        this.lengthOfGenotype=lengthOfGenotype;
+        for (int i = 0; i < this.lengthOfGenotype; i++) {
             this.genotype.add(random.nextInt(8));
         }
     }
 
     public Genotype(ArrayList<Integer> genotype) {
+        this.lengthOfGenotype=genotype.size();
         this.genotype = genotype;
     }
 
@@ -54,7 +55,7 @@ public class Genotype {
         }
     }
 
-    public ArrayList<Integer> MutateRandom() {  //mutowanie losowe z przedzialu 0-7
+    public void mutateRandom(int mutationMin, int mutationMax) {  //mutowanie losowe z przedzialu 0-7
         ArrayList<Integer> indexes = new ArrayList<>();
         int mutation = random.nextInt(mutationMax + 1) + mutationMin;
         for (int i = 0; i < mutation; i++) {
@@ -67,10 +68,9 @@ public class Genotype {
             indexes.add(index1);
             this.genotype.set(index1, value);
         }
-        return this.genotype;
     }
 
-    public ArrayList<Integer> MutatePlusOne() {
+    public void mutatePlusOne(int mutationMin, int mutationMax) {
         ArrayList<Integer> indexes = new ArrayList<>();
         int mutation = random.nextInt(mutationMax + 1) + mutationMin;
         for (int i = 0; i <= mutation; i++) {
@@ -96,11 +96,15 @@ public class Genotype {
 
             this.genotype.set(index1, value);
         }
-        return this.genotype;
     }
 
     public ArrayList<Integer> getGenotype() {
         return this.genotype;
     }
 
+    @Override
+    public String toString() {
+       return genotype.stream().map(String::valueOf)
+               .collect(Collectors.joining(","));
+    }
 }

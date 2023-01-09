@@ -17,5 +17,10 @@ public abstract class AbstractGameObject implements IGameObject{
     public void setPosition(Vector2d position) {
         this.position=position;
     }
+    @Override
+    public String toImagePath() {
+        throw new UnsupportedOperationException();
+    }
+
 
 }
