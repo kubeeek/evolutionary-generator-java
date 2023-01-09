@@ -63,7 +63,7 @@ public class SimulationEngine {
 
         EnumStringParser parser = new EnumStringParser(this.simulationConfig.getParameter("plants_variant"));
         if (SimulationConfigVariant.PlantGrowth.EQUATOR == parser.getValue())
-            this.grassGenerator = new EquatorGrassGenerator(3);
+            this.grassGenerator = new EquatorGrassGenerator(this.mapHeight * 1/3);
         else
             this.grassGenerator = new ToxicGravesGrassGenerator();
 

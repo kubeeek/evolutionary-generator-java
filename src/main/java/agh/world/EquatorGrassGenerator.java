@@ -16,7 +16,7 @@ public class EquatorGrassGenerator implements IGrassGenerator
 
     public EquatorGrassGenerator(int equatorHeight) {
         this.randomizer = new Random();
-        this.equatorHeight = equatorHeight;
+        this.equatorHeight = equatorHeight / 2;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class EquatorGrassGenerator implements IGrassGenerator
         this.mapHeight = map.getHeight();
         this.mapWidth = map.getWidth();
 
-        this.equator = mapHeight/2;
+        this.equator = mapHeight / 2;
 
         if(this.equator - this.equatorHeight < 0)
             throw new InvalidParameterException("Equator height is too large. Exceeds the lower limit of 0.");
