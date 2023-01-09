@@ -3,18 +3,17 @@ package agh;
 import agh.simulation.config.SimulationConfigVariant;
 import agh.world.IMap;
 
-import java.awt.Color;
-
-import java.util.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Animal extends AbstractGameObject implements Comparable<Animal> {
+    private final CopyOnWriteArrayList<IPositionChangeObserver> observers = new CopyOnWriteArrayList<>();
+    private final Genotype genotype;
+    private final IGenePicker genePicker;
     int age = 0;
     int countEatenGrass = 0;
-    private Directions direction = Directions.getRandom();
-
-    private final CopyOnWriteArrayList<IPositionChangeObserver> observers = new CopyOnWriteArrayList<>();
-
     IMap map;
     int energyUsedToReproduce;
     int energyUsedToMove = 1;
@@ -23,13 +22,10 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
     int mutationMin;
     int deathDate = -1;
     int energyNeededToBorn;
-
-    private Color colorLabel;
-
     SimulationConfigVariant.Mutation mutationType;
-    private final Genotype genotype;
+    private Directions direction = Directions.getRandom();
+    private Color colorLabel;
     private int children = 0;
-    private final IGenePicker genePicker;
 
     //Animal przy inicjacji
     public Animal(
@@ -224,15 +220,6 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
             observer.positionChanged(this, oldPosition, newPosition);
         }
     }
-    public boolean isReadyToBorn(){
-        return getEnergy()>=this.energyNeededToBorn;
-    }
-    public String toString(){
-        return "kierunek "+direction.toString()+" pozycja "+getPosition().toString()+" genotyp "+genotype.toString();
-    }
-    public int getEnergyNeededToBorn(){
-        return this.energyNeededToBorn;
-    }
 
     public boolean isReadyToBorn() {
         return getEnergy() >= this.energyNeededToBorn;
@@ -264,26 +251,11 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
     @Override
     public String toImagePath() {
         return "src/main/resources/szczur.png";
+
+
     }
 
-    @Override
-    public int compareTo(Animal o) {
-        return Comparator.comparing(Animal::getEnergy)
-                .thenComparing(Animal::getAge)
-                .thenComparing(Animal::getChildrenAmount)
-                .compare(this, o);
-    }
-
-    public synchronized void eat(Grass grass) {
-        this.map.deleteAt(grass.getPosition(), grass);
-
-        this.setEnergy(this.energy + this.energyGainedFromEating);
-    }
-    @Override
-    public String toImagePath() {
-        return "src/main/resources/szczur.png";
-
-public void updateLabelColor() {
+    public void updateLabelColor() {
         if (this.getEnergy() >= getEnergyNeededToBorn()) {
             this.colorLabel = Color.GREEN;
         } else if (this.getEnergy() < getEnergyNeededToBorn() && this.getEnergy() >= getEnergyNeededToBorn() / 2) {
