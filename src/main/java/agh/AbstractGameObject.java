@@ -4,7 +4,7 @@ public abstract class AbstractGameObject implements IGameObject{
     int energy;
     public Vector2d position;
     @Override
-    public Vector2d getPosition() {
+    public synchronized Vector2d getPosition() {
         return this.position;
     }
 
@@ -14,7 +14,7 @@ public abstract class AbstractGameObject implements IGameObject{
     }
 
     @Override
-    public void setPosition(Vector2d position) {
+    public synchronized void setPosition(Vector2d position) {
         this.position=position;
     }
     @Override

@@ -7,14 +7,16 @@ import agh.world.IMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 public class DinnerConflictResolver {
 
     private final IMap map;
-    private final ArrayList<Animal> animals;
+    private final CopyOnWriteArrayList<Animal> animals;
 
-    public DinnerConflictResolver(IMap map, ArrayList<Animal> animals) {
+    public DinnerConflictResolver(IMap map, CopyOnWriteArrayList<Animal> animals) {
+
         this.map = map;
         this.animals = animals;
     }

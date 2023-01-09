@@ -3,15 +3,17 @@ package agh;
 import agh.simulation.config.SimulationConfigVariant;
 import agh.world.IMap;
 
-import java.awt.Color;
-
-import java.util.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Animal extends AbstractGameObject implements Comparable<Animal> {
+    private final CopyOnWriteArrayList<IPositionChangeObserver> observers = new CopyOnWriteArrayList<>();
+    private final Genotype genotype;
+    private final IGenePicker genePicker;
     int age = 0;
     int countEatenGrass = 0;
-    private Directions direction = Directions.getRandom();
-    private final ArrayList<IPositionChangeObserver> observers = new ArrayList<>();
     IMap map;
     int energyUsedToReproduce;
     int energyUsedToMove = 1;
@@ -20,11 +22,10 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
     int mutationMin;
     int deathDate = -1;
     int energyNeededToBorn;
-    private Color colorLabel;
     SimulationConfigVariant.Mutation mutationType;
-    private final Genotype genotype;
+    private Directions direction = Directions.getRandom();
+    private Color colorLabel;
     private int children = 0;
-    private final IGenePicker genePicker;
 
     //Animal przy inicjacji
     public Animal(
@@ -79,8 +80,8 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
         //Polozenie
         this.map = dad.map;
         this.position = dad.getPosition();
-        this.colorLabel = Color.GREEN;
 
+        this.colorLabel = Color.GREEN;
         dad.addChild();
         mom.addChild();
     }
@@ -121,7 +122,7 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
         this.observers.remove(observer);
     }
 
-    public void decreaseEnergy() {
+    public synchronized void decreaseEnergy() {
         this.energy -= energyUsedToMove;
     }
 
@@ -140,19 +141,19 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
         return momEnergyUsed + dadEnergyUsed;
     }
 
-    public void addAge() {
+    public synchronized void addAge() {
         this.age++;
     }
 
-    public int getEnergy() {
+    public synchronized int getEnergy() {
         return this.energy;
     }
 
-    public void setEnergy(int energy) {
+    public synchronized void setEnergy(int energy) {
         this.energy = energy;
     }
 
-    public boolean isDead() {
+    public synchronized boolean isDead() {
         return getEnergy() <= 0;
     }
 
@@ -172,7 +173,7 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
         return children;
     }
 
-    public void move() {
+    public synchronized void move() {
         addAge();
         int gene = this.genePicker.getNextGene();
         switch (gene) {
@@ -214,7 +215,7 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
         return this.age;
     }
 
-    private void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
+    private synchronized void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
         for (IPositionChangeObserver observer : this.observers) {
             observer.positionChanged(this, oldPosition, newPosition);
         }
@@ -250,6 +251,8 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
     @Override
     public String toImagePath() {
         return "src/main/resources/szczur.png";
+
+
     }
 
     public void updateLabelColor() {

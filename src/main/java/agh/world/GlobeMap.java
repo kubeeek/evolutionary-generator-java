@@ -9,7 +9,7 @@ public class GlobeMap extends AbstractMap {
     }
 
     @Override
-    public void positionChanged(IGameObject object, Vector2d oldPosition, Vector2d newPosition) {
+    public synchronized void positionChanged(IGameObject object, Vector2d oldPosition, Vector2d newPosition) {
         if (newPosition.x >= this.getWidth())
             newPosition = new Vector2d(0, newPosition.y);
         else if (newPosition.x < 0)
@@ -19,6 +19,7 @@ public class GlobeMap extends AbstractMap {
             newPosition = new Vector2d(newPosition.x, 0);
         else if (newPosition.x < 0)
             newPosition = new Vector2d(newPosition.x, this.getHeight() - 1);
+
 
         super.positionChanged(object, oldPosition, newPosition);
     }

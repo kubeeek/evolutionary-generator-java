@@ -3,18 +3,28 @@ package agh.simulation;
 import agh.Animal;
 import agh.world.IMap;
 
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SimulationTick implements Runnable {
 
-    private final ArrayList<Animal> animals;
-    private final IMap map;
+    final IMap map;
     private final int healthyStatus;
+    private final Animal chosenAnimal;
+    CopyOnWriteArrayList<Animal> animals;
+    private CopyOnWriteArrayList<ISimulationChange> observers = new CopyOnWriteArrayList<>();
 
-    SimulationTick(ArrayList<Animal> animals, IMap map, int healthyStatus) {
+    SimulationTick(CopyOnWriteArrayList<Animal> animals, IMap map, int healthyStatus, Animal chosenAnimal) {
         this.animals = animals;
         this.map = map;
         this.healthyStatus = healthyStatus;
+        this.chosenAnimal = chosenAnimal;
+    }
+
+    public void notifyObservers() {
+        for (var observer :
+                observers) {
+            observer.simulationChanged(this.map);
+        }
     }
 
     /**
@@ -24,20 +34,19 @@ public class SimulationTick implements Runnable {
     public void run() {
         System.out.println("ticked");
 
-        // for each simulation entity which is animal:
-        for (var animal :
-                animals) {
-            // remove them if dead
-            if (animal.isDead()) {
-                this.map.deleteAt(animal.getPosition(), animal);
-                this.animals.remove(animal);
-
-                continue;
+        if (animals.size() > 0) {
+            for (var animal :
+                    animals) {
+                // skip them if dead
+                if (animal.isDead()) {
+                    this.map.deleteAt(animal.getPosition(), animal);
+                    System.out.println("zdech");
+                    continue;
+                } else {
+                    // rotate them & make a move
+                    animal.move();
+                }
             }
-
-            // rotate them & make a move
-            animal.move();
-
         }
 
         // eat
@@ -48,5 +57,17 @@ public class SimulationTick implements Runnable {
 
         // grow new plants
         this.map.populateGrass();
+        notifyObservers();
+        System.out.println("------------------");
+
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void addObserver(ISimulationChange observer) {
+        this.observers.add(observer);
     }
 }

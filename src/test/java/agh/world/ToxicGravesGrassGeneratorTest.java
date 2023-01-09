@@ -17,15 +17,15 @@ import static org.junit.Assert.assertEquals;
 public class ToxicGravesGrassGeneratorTest {
 
     private IGrassGenerator grassGenerator;
-    private DeathTracker deathTracker;
+    private GraveyardTracker graveyardTracker;
 
     @BeforeEach
     public void setUp() {
         grassGenerator = new ToxicGravesGrassGenerator();
-        deathTracker = Mockito.mock(DeathTracker.class);
+        graveyardTracker = Mockito.mock(GraveyardTracker.class);
         AbstractMap abstractMap = Mockito.mock(AbstractMap.class);
 
-        abstractMap.deathTracker = deathTracker;
+        abstractMap.graveyardTracker = graveyardTracker;
 
         grassGenerator.setUp(abstractMap);
     }
@@ -35,7 +35,8 @@ public class ToxicGravesGrassGeneratorTest {
         var sortedLeastDeathPositions = Mockito.mock(ArrayList.class);
         Mockito.when(sortedLeastDeathPositions.get(0)).thenReturn(new Vector2d(0, 0)).thenReturn(new Vector2d(1, 1));
 
-        Mockito.when(deathTracker.getLeastGravePositions()).thenReturn(sortedLeastDeathPositions);
+        Mockito.when(graveyardTracker.getLeastGravePositions()).thenReturn(sortedLeastDeathPositions);
+        Mockito.when(graveyardTracker.getLeastGravePosition()).thenReturn(new Vector2d(0, 0));
 
         Grass grass = grassGenerator.getNewGrass();
         Assertions.assertEquals(new Vector2d(0, 0), grass.getPosition());
