@@ -141,6 +141,7 @@ public class SimulationEngine implements IAnimalChosenListener {
             this.executor = Executors.newSingleThreadScheduledExecutor();
 
             this.executor.scheduleAtFixedRate(this.simulationTick, 500, 500, TimeUnit.MILLISECONDS);
+
         } catch (Throwable e) {
             System.out.println(e);
         }
