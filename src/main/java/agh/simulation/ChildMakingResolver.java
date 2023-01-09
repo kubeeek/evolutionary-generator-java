@@ -34,7 +34,7 @@ public class ChildMakingResolver {
             if (healthyNeighbours.size() != 0 && healthyNeighbours.size() % 2 == 0) {
                 for (int i = 0; i < healthyNeighbours.size() - 1; i++) {
                     var mom = healthyNeighbours.get(i);
-                    var dad = healthyNeighbours.get(i++);
+                    var dad = healthyNeighbours.get(i+1);
 
                     var children = new Animal(mom, dad);
                     this.map.place(children);

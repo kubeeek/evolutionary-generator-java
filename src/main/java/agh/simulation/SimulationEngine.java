@@ -137,10 +137,9 @@ public class SimulationEngine implements IAnimalChosenListener {
         System.out.println("tick");
         try {
             this.simulationTick = new SimulationTick(animals, map, energyHealthyStatus, this.chosenAnimal);
-            this.simulationTick.addObserver(this.simulationScene);
-            this.executor = Executors.newSingleThreadScheduledExecutor();
+           // this.simulationTick.addObserver(this.simulationScene);
+            this.simulationTick.run();
 
-            this.executor.scheduleAtFixedRate(this.simulationTick, 1500, 1500, TimeUnit.MILLISECONDS);
         } catch (Throwable e) {
             System.out.println(e);
         }
@@ -150,12 +149,6 @@ public class SimulationEngine implements IAnimalChosenListener {
 
     @Override
     public void animalChosen(Animal animal) {
-        this.chosenAnimal = animal;
-        this.executor.shutdown();
-
-        this.executor = Executors.newSingleThreadScheduledExecutor();
-        this.simulationTick = new SimulationTick(animals, map, energyHealthyStatus, this.chosenAnimal);
-        this.executor.scheduleWithFixedDelay(this.simulationTick, 500, 500, TimeUnit.MILLISECONDS);
     }
 
 

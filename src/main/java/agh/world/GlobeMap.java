@@ -17,7 +17,7 @@ public class GlobeMap extends AbstractMap {
 
         if (newPosition.y >= this.getHeight())
             newPosition = new Vector2d(newPosition.x, 0);
-        else if (newPosition.x < 0)
+        else if (newPosition.y < 0)
             newPosition = new Vector2d(newPosition.x, this.getHeight() - 1);
 
 

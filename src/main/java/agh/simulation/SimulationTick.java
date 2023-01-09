@@ -5,7 +5,7 @@ import agh.world.IMap;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class SimulationTick implements Runnable {
+public class SimulationTick {
 
     final IMap map;
     private final int healthyStatus;
@@ -30,21 +30,26 @@ public class SimulationTick implements Runnable {
     /**
      *
      */
-    @Override
+
     public void run() {
         System.out.println("ticked");
 
         if (animals.size() > 0) {
             for (var animal :
                     animals) {
+                //System.out.println(animal);
                 // skip them if dead
                 if (animal.isDead()) {
                     this.map.deleteAt(animal.getPosition(), animal);
-                    System.out.println("zdech");
+                    animals.remove(animal);
+
+                    System.out.println("zdechł");
                     continue;
                 } else {
                     // rotate them & make a move
                     animal.move();
+                    //System.out.println(animal);
+
                 }
             }
         }
