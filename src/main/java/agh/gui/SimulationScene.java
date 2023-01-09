@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 public class SimulationScene implements ISimulationChange {
     private final Stage stage;
@@ -49,23 +50,6 @@ public class SimulationScene implements ISimulationChange {
         this.simulationEngine.start();
 
 
-    }
-
-    private void update() throws ExecutionException, InterruptedException {
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                Platform.runLater(() -> {
-                    GridPane userInterface = createUserInterface();
-                    // GridPane mapGrid = createMapGrid();
-
-                    //stage.setScene(new Scene(new HBox(userInterface, mapGrid)));
-                    stage.show();
-                });
-            }
-        }, 0, 500);
-        //this.update();
     }
 
     private void setup() {
@@ -111,7 +95,9 @@ public class SimulationScene implements ISimulationChange {
                     } catch (FileNotFoundException ex) {
                         throw new RuntimeException(ex);
                     }
-                }).toList();
+                }).collect(Collectors.toList());
+
+                var anyAnimal = occupants.stream().filter(e -> e.mapObject instanceof Animal).findFirst();
 
                 mapping.put(stacked, occupants);
                 stacked.setMaxHeight(40);
@@ -123,7 +109,13 @@ public class SimulationScene implements ISimulationChange {
                     System.out.println(occupant.isPresent());
                     occupant.ifPresent(guiElementBox -> this.simulationEngine.animalChosen((Animal) guiElementBox.mapObject));
                 });
+
+                anyAnimal.ifPresent(occupants::remove);
+
                 occupants.forEach(e -> stacked.getChildren().add(e.getImageView()));
+
+                // last added imageview is at front layer
+                anyAnimal.ifPresent(guiElementBox -> stacked.getChildren().add(guiElementBox.getImageView()));
 
                 grid.add(stacked, j, i);
             }
