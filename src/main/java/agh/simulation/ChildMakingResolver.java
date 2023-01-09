@@ -3,11 +3,8 @@ package agh.simulation;
 import agh.Animal;
 import agh.world.IMap;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import java.util.stream.Collectors;
 
 public class ChildMakingResolver {
     private final IMap map;
@@ -23,8 +20,11 @@ public class ChildMakingResolver {
     }
 
     public void resolve() {
-        for (var animal : animals) {
-            var healthyNeighbours = this.map.objectsAt(animal.getPosition())
+        var positions = this.map.getMapObjects().entrySet();
+
+        for (var position : positions) {
+            var occupants = position.getValue();
+            var healthyNeighbours = occupants
                     .stream()
                     .filter(e -> e instanceof Animal).map(e -> (Animal) e)
                     .filter(e -> e.getEnergy() >= healthyStatus)
@@ -34,6 +34,8 @@ public class ChildMakingResolver {
             if (healthyNeighbours.size() != 0 && healthyNeighbours.size() % 2 == 0) {
                 for (int i = 0; i < healthyNeighbours.size() - 1; i++) {
                     var mom = healthyNeighbours.get(i);
+                    if (visitedAnimals.contains(mom))
+                        continue;
                     var dad = healthyNeighbours.get(i++);
 
                     var children = new Animal(mom, dad);
