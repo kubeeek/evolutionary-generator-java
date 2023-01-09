@@ -1,6 +1,7 @@
 package agh.simulation;
 
 import agh.Animal;
+import agh.IPositionChangeObserver;
 import agh.world.IMap;
 
 import java.util.HashSet;
@@ -40,7 +41,8 @@ public class ChildMakingResolver {
 
                     var children = new Animal(mom, dad);
                     this.map.place(children);
-
+                    children.addObserver((IPositionChangeObserver) this.map);
+                    this.animals.add(children);
                     this.visitedAnimals.add(mom);
                     this.visitedAnimals.add(dad);
                     this.visitedAnimals.add(children);

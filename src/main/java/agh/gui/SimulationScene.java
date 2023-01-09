@@ -31,8 +31,7 @@ public class SimulationScene implements ISimulationChange {
         this.simulationConfig = simulationConfig;
         this.setup();
         this.stage = new Stage();
-        this.stage.setTitle("Chuj")
-        ;
+        this.stage.setTitle("Darwin_Simulation");
         this.stage.setMinWidth(WindowConstant.SIM_WIDTH);
         this.stage.setMinHeight(WindowConstant.SIM_HEIGHT);
 
