@@ -56,11 +56,11 @@ public class GraveyardTracker {
         int i = 0;
         var object = sorted.get(i);
 
-        while (visitedPositions.contains(object)) {
+        while (visitedPositions.contains(object) && i + 1 < visitedPositions.size()) {
             object = sorted.get(i++);
         }
 
-        if (visitedPositions.size() == sorted.size())
+        if(visitedPositions.size() == i)
             visitedPositions.clear();
 
         visitedPositions.add(object);
