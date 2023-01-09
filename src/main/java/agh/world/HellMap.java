@@ -10,7 +10,7 @@ public class HellMap extends AbstractMap {
     }
 
     @Override
-    public void positionChanged(IGameObject object, Vector2d oldPosition, Vector2d newPosition) {
+    public synchronized     void positionChanged(IGameObject object, Vector2d oldPosition, Vector2d newPosition) {
         if(newPosition.x >= this.getWidth() || newPosition.x < 0)
             newPosition = this.getRandomPosition();
 

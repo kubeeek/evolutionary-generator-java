@@ -4,18 +4,17 @@ import agh.Grass;
 import agh.Vector2d;
 
 public class ToxicGravesGrassGenerator implements IGrassGenerator {
-    private DeathTracker deathTracker;
+    private GraveyardTracker graveyardTracker;
 
     @Override
     public Grass getNewGrass() {
-        var sorted = this.deathTracker.getLeastGravePositions();
-        var leastDeathsMapPosition = sorted.get(0);
+        var leastDeathsMapPosition = this.graveyardTracker.getLeastGravePosition();
 
         return new Grass(new Vector2d(leastDeathsMapPosition.x, leastDeathsMapPosition.y));
     }
 
     @Override
     public void setUp(AbstractMap abstractMap) {
-        this.deathTracker = abstractMap.deathTracker;
+        this.graveyardTracker = abstractMap.graveyardTracker;
     }
 }

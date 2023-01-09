@@ -2,25 +2,28 @@ package agh.simulation;
 
 import agh.*;
 import agh.gui.EnumStringParser;
+import agh.gui.SimulationScene;
 import agh.simulation.config.SimulationConfig;
 import agh.simulation.config.SimulationConfigVariant;
 import agh.world.*;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class SimulationEngine {
+public class SimulationEngine implements IAnimalChosenListener {
 
     private final SimulationConfig simulationConfig;
 
+    private final SimulationScene simulationScene;
     IMap map;
     int moveEnergy;
     int delay = 1;
     Random random = new Random();
-    ArrayList<Animal> animals = new ArrayList<>();
+    CopyOnWriteArrayList<Animal> animals = new CopyOnWriteArrayList<>();
 
     private int mapHeight;
     private int mapWidth;
@@ -40,13 +43,16 @@ public class SimulationEngine {
     private int genomeAnimalLength;
     private int startEnergy;
     private int plantEnergy;
-    private boolean paused = false;
 
     private int passedTicks = 0;
+    private Animal chosenAnimal;
+    private SimulationTick simulationTick;
+    private ScheduledExecutorService executor;
 
-    public SimulationEngine(SimulationConfig simulationConfig) {
+    public SimulationEngine(SimulationConfig simulationConfig, SimulationScene app) {
         this.simulationConfig = simulationConfig;
         this.setup();
+        this.simulationScene = app;
     }
 
     public void setup() {
@@ -115,34 +121,42 @@ public class SimulationEngine {
                     this.mutationVariant
             );
 
+            animal.addObserver((IPositionChangeObserver) this.map);
             animals.add(animal);
             map.place(animal);
         }
     }
 
     public void start() {
-        this.paused = false;
-
         loop();
     }
 
     private void loop() {
-////        if(this.paused)
-////            return;
-//        System.out.println("tick");
-//
-//        SimulationTick tick = new SimulationTick(animals, map, heatlhyStatus);
-//        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-//
-//        executorService.shutdown();
-//        executorService.schedule(tick, delay, TimeUnit.SECONDS);
-////        this.paused = true;
-//        this.passedTicks++;
-//
-//        loop();
+        System.out.println("tick");
+        try {
+            this.simulationTick = new SimulationTick(animals, map, energyHealthyStatus, this.chosenAnimal);
+            this.simulationTick.addObserver(this.simulationScene);
+            this.executor = Executors.newSingleThreadScheduledExecutor();
+
+            this.executor.scheduleAtFixedRate(this.simulationTick, 1500, 1500, TimeUnit.MILLISECONDS);
+        } catch (Throwable e) {
+            System.out.println(e);
+        }
+
+        this.passedTicks++;
     }
 
-    public IMap getMap() {
+    public synchronized IMap getMap() {
         return this.map;
+    }
+
+    @Override
+    public void animalChosen(Animal animal) {
+        this.chosenAnimal = animal;
+        this.executor.shutdown();
+
+        this.executor = Executors.newSingleThreadScheduledExecutor();
+        this.simulationTick = new SimulationTick(animals, map, energyHealthyStatus, this.chosenAnimal);
+        this.executor.scheduleWithFixedDelay(this.simulationTick, 500, 500, TimeUnit.MILLISECONDS);
     }
 }

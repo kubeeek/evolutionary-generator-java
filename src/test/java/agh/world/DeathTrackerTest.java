@@ -14,14 +14,14 @@ class DeathTrackerTest {
     @Test
     @DisplayName("Test the constructor to ensure it correctly initializes the deathsOnMap field with the correct number of keys")
     public void testConstructor() {
-        DeathTracker tracker = new DeathTracker(10, 20);
+        GraveyardTracker tracker = new GraveyardTracker(10, 20);
         assertEquals(tracker.deathsOnMap.size(), 200);
     }
 
     @Test
     @DisplayName("Test the countAnimal method to ensure it correctly increments the death count for the animal's position")
     public void testCountAnimal() {
-        DeathTracker tracker = new DeathTracker(10, 20);
+        GraveyardTracker tracker = new GraveyardTracker(10, 20);
         Animal a = Mockito.mock(Animal.class);
         Mockito.when(a.getPosition()).thenReturn(new Vector2d(5, 5));
         Mockito.when(a.isDead()).thenReturn(false);
@@ -36,7 +36,7 @@ class DeathTrackerTest {
     @Test
     @DisplayName("Test the `addGrave` method to ensure it correctly increments the death count for the specified position")
     public void testAddGrave() {
-        DeathTracker tracker = new DeathTracker(10, 20);
+        GraveyardTracker tracker = new GraveyardTracker(10, 20);
         Vector2d pos = new Vector2d(5, 5);
         tracker.addGrave(pos);
         assertEquals(tracker.deathsOnMap.get(pos), 1);
@@ -45,7 +45,7 @@ class DeathTrackerTest {
     @Test
     @DisplayName("Test the getLeastGravePositions method to ensure it returns the positions with the lowest death count in ascending order")
     public void testGetLeastGravePositions() {
-        DeathTracker tracker = new DeathTracker(10, 20);
+        GraveyardTracker tracker = new GraveyardTracker(10, 20);
         Vector2d pos1 = new Vector2d(6, 5);
         Vector2d pos2 = new Vector2d(7, 5);
 

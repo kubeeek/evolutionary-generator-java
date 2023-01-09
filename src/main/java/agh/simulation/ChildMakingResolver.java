@@ -5,16 +5,17 @@ import agh.world.IMap;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 public class ChildMakingResolver {
     private final IMap map;
-    private final ArrayList<Animal> animals;
+    private final CopyOnWriteArrayList<Animal> animals;
     private final int healthyStatus;
 
     private final HashSet<Animal> visitedAnimals = new HashSet<>();
 
-    public ChildMakingResolver(IMap map, ArrayList<Animal> animals, int healthyStatus) {
+    public ChildMakingResolver(IMap map, CopyOnWriteArrayList<Animal> animals, int healthyStatus) {
         this.map = map;
         this.animals = animals;
         this.healthyStatus = healthyStatus;

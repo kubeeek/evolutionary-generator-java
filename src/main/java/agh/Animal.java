@@ -4,12 +4,13 @@ import agh.simulation.config.SimulationConfigVariant;
 import agh.world.IMap;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Animal extends AbstractGameObject implements Comparable<Animal> {
     int age = 0;
     int countEatenGrass = 0;
     private Directions direction = Directions.getRandom();
-    private final ArrayList<IPositionChangeObserver> observers = new ArrayList<>();
+    private final CopyOnWriteArrayList<IPositionChangeObserver> observers = new CopyOnWriteArrayList<>();
     IMap map;
     int energyUsedToReproduce;
     int energyUsedToMove = 1;
@@ -116,7 +117,7 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
         this.observers.remove(observer);
     }
 
-    public void decreaseEnergy() {
+    public synchronized void decreaseEnergy() {
         this.energy -= energyUsedToMove;
     }
 
@@ -135,19 +136,19 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
         return momEnergyUsed + dadEnergyUsed;
     }
 
-    public void addAge() {
+    public synchronized void addAge() {
         this.age++;
     }
 
-    public int getEnergy() {
+    public synchronized int getEnergy() {
         return this.energy;
     }
 
-    public void setEnergy(int energy) {
+    public synchronized void setEnergy(int energy) {
         this.energy = energy;
     }
 
-    public boolean isDead() {
+    public synchronized boolean isDead() {
         return getEnergy() <= 0;
     }
 
@@ -167,7 +168,7 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
         return children;
     }
 
-    public void move() {
+    public synchronized void move() {
         addAge();
         int gene = this.genePicker.getNextGene();
         switch (gene) {
@@ -209,7 +210,7 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
         return this.age;
     }
 
-    private void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
+    private synchronized void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
         for (IPositionChangeObserver observer : this.observers) {
             observer.positionChanged(this, oldPosition, newPosition);
         }
@@ -233,7 +234,7 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
                 .compare(this, o);
     }
 
-    public void eat(Grass grass) {
+    public synchronized void eat(Grass grass) {
         this.map.deleteAt(grass.getPosition(), grass);
 
         this.setEnergy(this.energy + this.energyGainedFromEating);

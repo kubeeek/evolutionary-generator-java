@@ -5,17 +5,19 @@ import agh.*;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 public abstract class AbstractMap implements IMap, IPositionChangeObserver {
     final int width;
     final int height;
     private final int dailyPlantGrowth;
-    DeathTracker deathTracker;
+    GraveyardTracker graveyardTracker;
 
-    HashMap<Vector2d, LinkedHashSet<IGameObject>> mapObjects = new HashMap<>();
-    LinkedHashSet<IGameObject> defaultValue = new LinkedHashSet<>();
+    ConcurrentHashMap<Vector2d, CopyOnWriteArrayList<IGameObject>> mapObjects = new ConcurrentHashMap<>();
+    CopyOnWriteArrayList<IGameObject> defaultValue = new CopyOnWriteArrayList<>();
 
     IGrassGenerator grassGenerator;
     Random random = new Random();
@@ -26,11 +28,12 @@ public abstract class AbstractMap implements IMap, IPositionChangeObserver {
 
         this.dailyPlantGrowth = dailyPlantGrowth;
         this.grassGenerator = grassGenerator;
+
+
+        this.graveyardTracker = new GraveyardTracker(this.height, this.width);
         this.grassGenerator.setUp(this);
 
         this.populateGrass(startPlantCount);
-
-        this.deathTracker = new DeathTracker(this.height, this.width);
     }
 
     public void populateGrass() {
@@ -52,7 +55,7 @@ public abstract class AbstractMap implements IMap, IPositionChangeObserver {
         }
     }
 
-    protected boolean hasFreeSpaceForGrass() {
+    protected synchronized boolean hasFreeSpaceForGrass() {
         if (this.mapObjects.size() < this.height * this.width)
             return true;
 
@@ -68,10 +71,10 @@ public abstract class AbstractMap implements IMap, IPositionChangeObserver {
     }
 
     private void initializeKey(Vector2d key) {
-        mapObjects.put(key, new LinkedHashSet<>());
+        mapObjects.put(key, new CopyOnWriteArrayList<>());
     }
 
-    private boolean hasGrassAt(Vector2d position) {
+    private synchronized boolean hasGrassAt(Vector2d position) {
         var objectList = this.objectsAt(position);
 
         return !objectList.stream().filter(listObject -> listObject instanceof Grass).toList().isEmpty();
@@ -83,7 +86,7 @@ public abstract class AbstractMap implements IMap, IPositionChangeObserver {
     }
 
     @Override
-    public boolean place(IGameObject gameObject) throws InvalidParameterException {
+    public synchronized boolean place(IGameObject gameObject) throws InvalidParameterException {
         var position = gameObject.getPosition();
 
         if (position == null)
@@ -100,12 +103,12 @@ public abstract class AbstractMap implements IMap, IPositionChangeObserver {
     }
 
     @Override
-    public ArrayList<IGameObject> objectsAt(Vector2d position) {
+    public synchronized ArrayList<IGameObject> objectsAt(Vector2d position) {
         return new ArrayList<>(mapObjects.getOrDefault(position, this.defaultValue).stream().toList());
     }
 
     @Override
-    public boolean placeAt(Vector2d position, IGameObject gameObject) {
+    public synchronized boolean placeAt(Vector2d position, IGameObject gameObject) {
         if (mapObjects.get(position) == null)
             this.initializeKey(position);
 
@@ -113,28 +116,28 @@ public abstract class AbstractMap implements IMap, IPositionChangeObserver {
     }
 
     @Override
-    public boolean deleteAt(Vector2d position, IGameObject gameObject) {
+    public synchronized boolean deleteAt(Vector2d position, IGameObject gameObject) {
         if (gameObject instanceof Animal && ((Animal) gameObject).isDead())
-            deathTracker.countAnimal((Animal) gameObject);
+            graveyardTracker.countAnimal((Animal) gameObject);
 
         return mapObjects.getOrDefault(position, this.defaultValue).remove(gameObject);
     }
 
-    public int getWidth() {
+    public synchronized int getWidth() {
         return this.width;
     }
 
-    public int getHeight() {
+    public synchronized int getHeight() {
         return this.height;
     }
 
     @Override
-    public Vector2d getRandomPosition() {
+    public synchronized Vector2d getRandomPosition() {
         return new Vector2d(random.nextInt(this.width), random.nextInt(this.height));
     }
 
     @Override
-    public void positionChanged(IGameObject object, Vector2d oldPosition, Vector2d newPosition) {
+    public synchronized void positionChanged(IGameObject object, Vector2d oldPosition, Vector2d newPosition) {
         this.deleteAt(oldPosition, object);
 
         object.setPosition(newPosition);

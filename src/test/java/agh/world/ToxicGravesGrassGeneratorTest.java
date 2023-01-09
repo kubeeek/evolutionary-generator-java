@@ -17,15 +17,15 @@ import static org.junit.Assert.assertEquals;
 public class ToxicGravesGrassGeneratorTest {
 
     private IGrassGenerator grassGenerator;
-    private DeathTracker deathTracker;
+    private GraveyardTracker deathTracker;
 
     @BeforeEach
     public void setUp() {
         grassGenerator = new ToxicGravesGrassGenerator();
-        deathTracker = Mockito.mock(DeathTracker.class);
+        deathTracker = Mockito.mock(GraveyardTracker.class);
         AbstractMap abstractMap = Mockito.mock(AbstractMap.class);
 
-        abstractMap.deathTracker = deathTracker;
+        abstractMap.graveyardTracker = deathTracker;
 
         grassGenerator.setUp(abstractMap);
     }
