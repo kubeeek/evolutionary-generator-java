@@ -16,6 +16,7 @@ public class GuiElementBox {
     private final Image image;
     private final ImageView imageView;
     IGameObject mapObject;
+
 //    private final Label label;
 //    public final VBox vBox;
 

@@ -6,6 +6,7 @@ import agh.world.IMap;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.concurrent.CopyOnWriteArrayList;
+
 import java.util.stream.Collectors;
 
 public class ChildMakingResolver {

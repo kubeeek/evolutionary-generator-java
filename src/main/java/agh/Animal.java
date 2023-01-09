@@ -3,6 +3,8 @@ package agh;
 import agh.simulation.config.SimulationConfigVariant;
 import agh.world.IMap;
 
+import java.awt.Color;
+
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -10,7 +12,9 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
     int age = 0;
     int countEatenGrass = 0;
     private Directions direction = Directions.getRandom();
+
     private final CopyOnWriteArrayList<IPositionChangeObserver> observers = new CopyOnWriteArrayList<>();
+
     IMap map;
     int energyUsedToReproduce;
     int energyUsedToMove = 1;
@@ -19,6 +23,9 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
     int mutationMin;
     int deathDate = -1;
     int energyNeededToBorn;
+
+    private Color colorLabel;
+
     SimulationConfigVariant.Mutation mutationType;
     private final Genotype genotype;
     private int children = 0;
@@ -41,7 +48,7 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
         this.energy = energy;
         this.energyUsedToReproduce = energyUsedToReproduce;
         this.energyGainedFromEating = energyGainedFromEating;
-        this.energyNeededToBorn=energyNeededToBorn;
+        this.energyNeededToBorn = energyNeededToBorn;
 
 
         this.genotype = new Genotype(lengthOfGenotype);
@@ -54,6 +61,7 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
 
         this.position = position;
         this.map = map;
+        this.colorLabel = Color.GREEN;
     }
 
     //Animal Dziecko
@@ -61,7 +69,7 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
         //Energia
         this.energyGainedFromEating = dad.energyGainedFromEating;
         this.energyUsedToReproduce = dad.energyUsedToReproduce;
-        this.energyNeededToBorn=dad.energyNeededToBorn;
+        this.energyNeededToBorn = dad.energyNeededToBorn;
         this.energy = getEnergyFromParents(dad, mom);
         //Mutacja
         this.mutationMin = dad.mutationMin;
@@ -77,6 +85,7 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
         this.map = dad.map;
         this.position = dad.getPosition();
 
+        this.colorLabel = Color.GREEN;
         dad.addChild();
         mom.addChild();
     }
@@ -95,9 +104,9 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
             int energyNeededToBorn,
             SimulationConfigVariant.Mutation mutationType,
             IPositionChangeObserver observer
-            ) {
+    ) {
         this(map, startEnergy, position, genePicker, lengthOfGenotype, energyGainedFromEating
-                , energyUsedToReproduce, mutationMin, mutationMax,energyNeededToBorn, mutationType);
+                , energyUsedToReproduce, mutationMin, mutationMax, energyNeededToBorn, mutationType);
         addObserver(observer);
     }
 
@@ -225,6 +234,37 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
         return this.energyNeededToBorn;
     }
 
+    public boolean isReadyToBorn() {
+        return getEnergy() >= this.energyNeededToBorn;
+    }
+
+    public String toString() {
+        return "kierunek " + direction.toString() + " pozycja " + getPosition().toString() + " genotyp " + genotype.toString();
+    }
+
+    public int getEnergyNeededToBorn() {
+        return this.energyNeededToBorn;
+    }
+
+
+    @Override
+    public int compareTo(Animal o) {
+        return Comparator.comparing(Animal::getEnergy)
+                .thenComparing(Animal::getAge)
+                .thenComparing(Animal::getChildrenAmount)
+                .compare(this, o);
+    }
+
+    public void eat(Grass grass) {
+        this.map.deleteAt(grass.getPosition(), grass);
+        this.setEnergy(this.energy + this.energyGainedFromEating);
+        this.updateLabelColor();
+    }
+
+    @Override
+    public String toImagePath() {
+        return "src/main/resources/szczur.png";
+    }
 
     @Override
     public int compareTo(Animal o) {
@@ -242,5 +282,18 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
     @Override
     public String toImagePath() {
         return "src/main/resources/szczur.png";
+
+public void updateLabelColor() {
+        if (this.getEnergy() >= getEnergyNeededToBorn()) {
+            this.colorLabel = Color.GREEN;
+        } else if (this.getEnergy() < getEnergyNeededToBorn() && this.getEnergy() >= getEnergyNeededToBorn() / 2) {
+            this.colorLabel = Color.YELLOW;
+        } else if (this.getEnergy() < getEnergyNeededToBorn() / 2) {
+            this.colorLabel = Color.RED;
+        }
+    }
+
+    public Color getLabelColor() {
+        return this.colorLabel;
     }
 }

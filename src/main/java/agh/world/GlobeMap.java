@@ -10,15 +10,16 @@ public class GlobeMap extends AbstractMap {
 
     @Override
     public synchronized void positionChanged(IGameObject object, Vector2d oldPosition, Vector2d newPosition) {
-//        if (newPosition.x >= this.getWidth())
-//            newPosition = new Vector2d(0, newPosition.y);
-//        else if (newPosition.x < 0)
-//            newPosition = new Vector2d(this.getWidth() - 1, newPosition.y);
-//
-//        if (newPosition.y >= this.getHeight())
-//            newPosition = new Vector2d(newPosition.x, 0);
-//        else if (newPosition.x < 0)
-//            newPosition = new Vector2d(newPosition.x, this.getHeight() - 1);
+        if (newPosition.x >= this.getWidth())
+            newPosition = new Vector2d(0, newPosition.y);
+        else if (newPosition.x < 0)
+            newPosition = new Vector2d(this.getWidth() - 1, newPosition.y);
+
+        if (newPosition.y >= this.getHeight())
+            newPosition = new Vector2d(newPosition.x, 0);
+        else if (newPosition.x < 0)
+            newPosition = new Vector2d(newPosition.x, this.getHeight() - 1);
+
 
         super.positionChanged(object, oldPosition, newPosition);
     }

@@ -102,6 +102,7 @@ public class SimulationScene implements ISimulationChange {
                 var stacked = new StackPane();
 
                 stacked.getChildren().add(new GuiElementBox(dirtImage, null).getImageView());
+
                 stacked.setMaxWidth(WindowConstant.SPRITE_HEIGHT);
                 stacked.setMaxHeight(WindowConstant.SPRITE_HEIGHT);
                 var occupants = map.objectsAt(new Vector2d(j, i)).stream().map(e -> {
@@ -134,7 +135,6 @@ public class SimulationScene implements ISimulationChange {
     private GridPane createUserInterface() {
         return new GridPane();
     }
-
     @Override
     public synchronized void simulationChanged(IMap map) {
         Platform.runLater(() -> {
@@ -146,4 +146,5 @@ public class SimulationScene implements ISimulationChange {
         });
         System.out.println("notified");
     }
+
 }

@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+
 public abstract class AbstractMap implements IMap, IPositionChangeObserver {
     final int width;
     final int height;
@@ -18,6 +19,7 @@ public abstract class AbstractMap implements IMap, IPositionChangeObserver {
 
     ConcurrentHashMap<Vector2d, CopyOnWriteArrayList<IGameObject>> mapObjects = new ConcurrentHashMap<>();
     CopyOnWriteArrayList<IGameObject> defaultValue = new CopyOnWriteArrayList<>();
+
 
     IGrassGenerator grassGenerator;
     Random random = new Random();
@@ -34,6 +36,14 @@ public abstract class AbstractMap implements IMap, IPositionChangeObserver {
         this.grassGenerator.setUp(this);
 
         this.populateGrass(startPlantCount);
+    }
+
+    public void populateGrass() {
+        this.populateGrass(this.dailyPlantGrowth);
+    }
+    @Override
+    public HashMap<Vector2d, LinkedHashSet<IGameObject>> getMapObjects(){
+        return mapObjects;
     }
 
     public void populateGrass() {
@@ -138,6 +148,19 @@ public abstract class AbstractMap implements IMap, IPositionChangeObserver {
 
     @Override
     public synchronized void positionChanged(IGameObject object, Vector2d oldPosition, Vector2d newPosition) {
+        this.deleteAt(oldPosition, object);
+
+        object.setPosition(newPosition);
+        this.place(object);
+    }
+
+    @Override
+    public Vector2d getRandomPosition() {
+        return new Vector2d(random.nextInt(this.width), random.nextInt(this.height));
+    }
+
+    @Override
+    public void positionChanged(IGameObject object, Vector2d oldPosition, Vector2d newPosition) {
         this.deleteAt(oldPosition, object);
 
         object.setPosition(newPosition);

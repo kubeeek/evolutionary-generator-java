@@ -4,6 +4,8 @@ import agh.IGameObject;
 import agh.Vector2d;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 
 /**
  * The interface responsible for interacting with the map of the world.
@@ -71,5 +73,6 @@ public interface IMap {
 
     void populateGrass();
 
+     HashMap<Vector2d, LinkedHashSet<IGameObject>> getMapObjects();
 
 }

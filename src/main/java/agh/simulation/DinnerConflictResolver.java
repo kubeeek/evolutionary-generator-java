@@ -16,6 +16,7 @@ public class DinnerConflictResolver {
     private final CopyOnWriteArrayList<Animal> animals;
 
     public DinnerConflictResolver(IMap map, CopyOnWriteArrayList<Animal> animals) {
+
         this.map = map;
         this.animals = animals;
     }
