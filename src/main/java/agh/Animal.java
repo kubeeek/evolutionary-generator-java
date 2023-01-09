@@ -74,13 +74,15 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
         //Genotyp
 
         this.genotype = new Genotype(mom, dad);
-        this.genePicker = dad.genePicker;
-        this.genePicker.setGenotype(this.genotype.getGenotype());
+        mutateGene(getGenotype());
+
+        this.genePicker = dad.genePicker instanceof DeterministicGenePicker ? new DeterministicGenePicker() : new RandomGenPicker();
+        this.genePicker.setGenotype(genotype.getGenotype());
         this.genePicker.setRandomCurrentIndex();
         mutateGene(getGenotype());
         //Polozenie
-        this.map = dad.map;
         this.position = dad.getPosition();
+        this.map = dad.map;
 
         this.colorLabel = Color.GREEN;
         dad.addChild();
