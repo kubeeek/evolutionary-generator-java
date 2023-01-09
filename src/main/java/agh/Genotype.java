@@ -1,5 +1,6 @@
 package agh;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -22,6 +23,8 @@ public class Genotype {
     }
 
     public Genotype(Animal firstParent, Animal secondParent) {
+        this.genotype = new ArrayList<>(firstParent.getGenotype());
+        this.lengthOfGenotype=genotype.size();
         int side = this.random.nextInt(2); // wylosowanie z której strony bedzie genom silniejszego zwierzaka
         int stop; //miejsce podziału genomu
         int parentsEnergy = firstParent.getEnergy() + secondParent.getEnergy();
@@ -29,6 +32,7 @@ public class Genotype {
         Animal weakerAnimal;
         ArrayList<Integer> strongerAnimalGenotype;
         ArrayList<Integer> weakerAnimalGenotype;
+
 
         weakerAnimal = firstParent.getEnergy() < secondParent.getEnergy() ? firstParent : secondParent; //porównanie w celu znalezienia zwierzaka z wieksza energia
         strongerAnimal = firstParent.getEnergy() >= secondParent.getEnergy() ? secondParent : firstParent; // -||- z mniejsza energia
@@ -38,27 +42,29 @@ public class Genotype {
 
         if (side == 0) {
             stop = (strongerAnimal.getEnergy() / parentsEnergy) * lengthOfGenotype; //udział rodzica razy dlugosc genomu
-            for (int i = 0; i <= lengthOfGenotype; i++) {
+            for (int i = 0; i < lengthOfGenotype; i++) {
                 if (stop >= 0)
                     this.genotype.set(i, strongerAnimalGenotype.get(i));
-                if (8 - stop >= 0)
+                if (lengthOfGenotype - stop >= 0)
                     this.genotype.set(i, weakerAnimalGenotype.get(i));
             }
         } else {
             stop = (weakerAnimal.getEnergy() / parentsEnergy) * lengthOfGenotype;
-            for (int i = 0; i <= lengthOfGenotype; i++) {
+            for (int i = 0; i < lengthOfGenotype; i++) {
                 if (stop >= 0)
                     this.genotype.set(i, weakerAnimalGenotype.get(i));
-                if (8 - stop >= 0)
+                if (lengthOfGenotype - stop >= 0)
                     this.genotype.set(i, strongerAnimalGenotype.get(i));
             }
         }
     }
 
-    public void mutateRandom(int mutationMin, int mutationMax) {  //mutowanie losowe z przedzialu 0-7
+    public void mutateRandom(int mutationMin, int mutationMax, ArrayList<Integer> genotype) {  //mutowanie losowe z przedzialu 0-7
+        ArrayList<Integer> genome = new ArrayList<>(genotype);
+        this.lengthOfGenotype=genome.size();
         ArrayList<Integer> indexes = new ArrayList<>();
-        int mutation = random.nextInt(mutationMax + 1) + mutationMin;
-        for (int i = 0; i < mutation; i++) {
+        int mutation = random.nextInt(mutationMax-mutationMin+1) + mutationMin;
+        for (int i = 0; i <= mutation; i++) {
             int index1 = random.nextInt(lengthOfGenotype);
             int value = random.nextInt(8);
             while (indexes.contains(index1) || value == genotype.get(index1)) {
@@ -66,13 +72,16 @@ public class Genotype {
                 value = random.nextInt(8);
             }
             indexes.add(index1);
-            this.genotype.set(index1, value);
+            genome.set(index1, value);
         }
+        this.genotype=genome;
     }
 
-    public void mutatePlusOne(int mutationMin, int mutationMax) {
+    public void mutatePlusOne(int mutationMin, int mutationMax, ArrayList<Integer> genotype) {
+        ArrayList<Integer> genome = new ArrayList<>(genotype);
+        this.lengthOfGenotype=genome.size();
         ArrayList<Integer> indexes = new ArrayList<>();
-        int mutation = random.nextInt(mutationMax + 1) + mutationMin;
+        int mutation = random.nextInt(mutationMax-mutationMin+1) + mutationMin;
         for (int i = 0; i <= mutation; i++) {
             int sign = this.random.nextInt(2); //losowanie czy gen+1 lub gen-1
             int index1 = random.nextInt(lengthOfGenotype);
@@ -94,8 +103,9 @@ public class Genotype {
                 value = 7;
             }
 
-            this.genotype.set(index1, value);
+            genome.set(index1, value);
         }
+        this.genotype=genome;
     }
 
     public ArrayList<Integer> getGenotype() {
@@ -104,7 +114,7 @@ public class Genotype {
 
     @Override
     public String toString() {
-       return genotype.stream().map(String::valueOf)
-               .collect(Collectors.joining(","));
+        return genotype.stream().map(String::valueOf)
+                .collect(Collectors.joining(","));
     }
 }

@@ -41,6 +41,7 @@ public class SimulationTick implements Runnable {
                 if (animal.isDead()) {
                     this.map.deleteAt(animal.getPosition(), animal);
                     System.out.println("zdech");
+                    this.animals.remove(animal);
                     continue;
                 } else {
                     // rotate them & make a move
