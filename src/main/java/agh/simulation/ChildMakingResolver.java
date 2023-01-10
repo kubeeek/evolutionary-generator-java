@@ -42,8 +42,10 @@ public class ChildMakingResolver {
                     var children = new Animal(mom, dad);
                     children.addObserver( (IPositionChangeObserver) this.map);
                     this.map.place(children);
-                    this.animals.add(children);
 
+                    children.addObserver((IPositionChangeObserver) this.map);
+                    this.animals.add(children);
+                    
                     this.visitedAnimals.add(mom);
                     this.visitedAnimals.add(dad);
                     this.visitedAnimals.add(children);
