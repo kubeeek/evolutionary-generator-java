@@ -8,53 +8,74 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SimulationStats {
 
     private final ArrayList<Animal> animals;
     private final IMap map;
-    List<Integer> agesOfDeadAnimals = new ArrayList<>();
+    List<Integer> agesOfDeadAnimals;
 
-    SimulationStats(IMap map, ArrayList<Animal> animals) {
+    SimulationStats(IMap map, ArrayList<Animal> animals, ArrayList<Integer> dead) {
         this.map = map;
         this.animals = animals;
-
+        this.agesOfDeadAnimals = dead;
     }
 
     public String getAverageEnergy() {
         int averageEnergy = 0;
-        for (Animal animal : this.animals) {
-            averageEnergy += animal.getEnergy();
+        if (this.animals.size() != 0) {
+            for (Animal animal : this.animals) {
+                averageEnergy += animal.getEnergy();
+            }
+            averageEnergy = averageEnergy / this.animals.size();
         }
-        return "Average energy: " + averageEnergy / this.animals.size();
+        return "" + averageEnergy;
     }
 
     public String getAmountOfAnimals() {
-        return "Animals: " + animals.size();
+        return "" + animals.size();
     }
 
     public String getAmountOfGrass() {
         int grassCount = 0;
-        for (var entry :
-                this.map.getMapObjects().entrySet()) {
+
+        var entries = this.map.getMapObjects().entrySet();
+        for (var entry : entries) {
             var occupants = entry.getValue();
-            var occupantsList = occupants.stream().filter(e -> e instanceof Grass).toList();
-            grassCount += occupantsList.size();
+            var isThereGrass = occupants.stream().anyMatch(e -> e instanceof Grass);
+            if (isThereGrass)
+                grassCount += 1;
+
         }
-        return "grasses: " + grassCount;
+
+        return "" + grassCount;
     }
 
     public String getAmountOfFreeSpaces() {
-        int freeSpaces = map.getHeight() * map.getWidth() - map.getMapObjects().entrySet().size();
-        return "free spaces: " + freeSpaces;
+        var filteredTakenPositions = map.getMapObjects()
+                .entrySet()
+                .stream()
+                .filter(e -> e.getValue().size() > 0)
+                .collect(Collectors.toList());
+
+        int freeSpaces = map.getHeight() * map.getWidth() - filteredTakenPositions.size();
+
+        return ""+freeSpaces;
     }
 
     public String getAverageAgeOfDeadAnimals() {
-        int sumAges = 0;
-        for (int age : this.agesOfDeadAnimals) {
-            sumAges += age;
+        if (agesOfDeadAnimals.size() == 0)
+            return "" + 0;
+
+        int totalAge = 0;
+        for (var age : agesOfDeadAnimals) {
+            totalAge += age;
         }
-        return "Average life: " + sumAges / this.agesOfDeadAnimals.size();
+
+        int averageAge = totalAge / agesOfDeadAnimals.size();
+
+        return "" + averageAge;
     }
 
     public String getMostFrequentGenotype() {
@@ -76,6 +97,6 @@ public class SimulationStats {
                 maxCount = entry.getValue();
             }
         }
-        return "Most frequent genotype: " + mostFrequentList;
+        return "" + mostFrequentList;
     }
 }

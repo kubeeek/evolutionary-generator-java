@@ -2,8 +2,8 @@ package agh;
 
 import agh.simulation.config.SimulationConfigVariant;
 import agh.world.IMap;
+import javafx.scene.paint.Color;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -74,10 +74,11 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
         //Genotyp
 
         this.genotype = new Genotype(mom, dad);
-        this.genePicker = dad.genePicker;
-        this.genePicker.setGenotype(this.genotype.getGenotype());
-        this.genePicker.setRandomCurrentIndex();
         mutateGene(getGenotype());
+
+        this.genePicker = dad.genePicker instanceof DeterministicGenePicker ? new DeterministicGenePicker() : new RandomGenPicker();
+        this.genePicker.setGenotype(genotype.getGenotype());
+        this.genePicker.setRandomCurrentIndex();
         //Polozenie
         this.map = dad.map;
         this.position = dad.getPosition();
@@ -213,7 +214,7 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
         this.deathDate = day;
     }
 
-    public int getAge() {
+    public synchronized int getAge() {
         return this.age;
     }
 
@@ -248,6 +249,7 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
         this.map.deleteAt(grass.getPosition(), grass);
         this.setEnergy(this.energy + this.energyGainedFromEating);
         this.updateLabelColor();
+        this.addToCountEatenGrass();
     }
 
     @Override
@@ -262,8 +264,10 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
             this.colorLabel = Color.GREEN;
         } else if (this.getEnergy() < getEnergyNeededToBorn() && this.getEnergy() >= getEnergyNeededToBorn() / 2) {
             this.colorLabel = Color.YELLOW;
-        } else if (this.getEnergy() < getEnergyNeededToBorn() / 2) {
+        } else if (this.getEnergy() < getEnergyNeededToBorn() / 2 && this.getEnergy()>getEnergyNeededToBorn()/4) {
             this.colorLabel = Color.RED;
+        } else {
+            this.colorLabel = Color.DARKRED;
         }
     }
 

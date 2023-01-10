@@ -75,6 +75,8 @@ public class StartingScene {
         return userInterface;
     }
     private VBox getStartSimulationButton() {
+        Button startButton = new Button("Start Simulation");
+
         startButton.setOnAction(click -> {
             ConfigForm.fillConfig(this.simulationConfig);
             new SimulationScene(this.simulationConfig);
@@ -83,32 +85,10 @@ public class StartingScene {
         VBox vbox = new VBox(startButton);
         vbox.setAlignment(Pos.CENTER);
         startButton.setAlignment(Pos.CENTER);
+        vbox.setPadding(new Insets(10));
 
         return vbox;
-    }   Button startButton = new Button("Start Simulation");
-
-    ////////////////////// Stworzenie przycisku i otwieranie sie nowych okien
-    private void openNewStageWithGrid() {
-        final int SIZE = 30;
-        final int WIDTH = 400;
-        final int HEIGHT = 400;
-
-        GridPane grid = new GridPane();
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
-                Rectangle rect = new Rectangle(SIZE, SIZE);
-                rect.setStrokeWidth(1);
-                rect.setStroke(javafx.scene.paint.Color.YELLOW);
-                grid.add(rect, col, row);
-            }
-        }
-
-        Stage stage = new Stage();
-        stage.setTitle("New Stage with Grid");
-        stage.setScene(new Scene(grid, WIDTH, HEIGHT));
-        stage.show();
     }
-    //////////////////////
 
     private Node createConfigFormInterface() {
         GridPane container = new GridPane();

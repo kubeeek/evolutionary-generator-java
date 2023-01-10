@@ -45,6 +45,14 @@ public class FormFieldLabelMapping {
                 new ChoiceBox<>(),
                 SimulationConfigVariant.AnimalBehavior.values()
         ));
+        formFields.put("map_loop", new ChoiceVariantFormField<>(
+                "Wariant mapy",
+                "map_loop",
+                new ChoiceBox<>(),
+                SimulationConfigVariant.MapLoop.values()
+        ));
+        formFields.put("filename", new TextFormField<String>("Nazwa pliku", "filename", new TextField("")));
+
     }
 
     public static LinkedHashMap<String, FormField<Object>> getFields() {
