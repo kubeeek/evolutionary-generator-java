@@ -1,6 +1,7 @@
 package agh.simulation;
 
 import agh.*;
+import agh.gui.CSVHandler;
 import agh.gui.EnumStringParser;
 import agh.gui.SimulationScene;
 import agh.simulation.config.SimulationConfig;
@@ -19,6 +20,7 @@ public class SimulationEngine implements IAnimalChosenListener {
     private final SimulationConfig simulationConfig;
 
     private final SimulationScene simulationScene;
+    public CSVHandler filehandler;
     IMap map;
     int moveEnergy;
     int delay = 1;
@@ -43,11 +45,14 @@ public class SimulationEngine implements IAnimalChosenListener {
     private int genomeAnimalLength;
     private int startEnergy;
     private int plantEnergy;
+    private String filename;
 
     private int passedTicks = 0;
     private Animal chosenAnimal;
     private SimulationTick simulationTick;
     private ScheduledExecutorService executor;
+    private ArrayList<Integer> deads = new ArrayList<>();
+
 
     public SimulationEngine(SimulationConfig simulationConfig, SimulationScene app) {
         this.simulationConfig = simulationConfig;
@@ -94,7 +99,14 @@ public class SimulationEngine implements IAnimalChosenListener {
         this.mutationMinimal = Integer.parseInt(this.simulationConfig.getParameter("mutation_minimal"));
         this.mutationMaximal = Integer.parseInt(this.simulationConfig.getParameter("mutation_maximal"));
         this.genomeAnimalLength = Integer.parseInt(this.simulationConfig.getParameter("genome_animal_length"));
+        this.filename = this.simulationConfig.getParameter("filename");
+
+        this.filehandler=new CSVHandler(filename);
     }
+    public CSVHandler getFilehandler(){
+        return this.filehandler;
+    }
+
 
     private void setupAnimals() {
         for (int i = 0; i < this.animalStartingCount; i++) {
@@ -129,15 +141,19 @@ public class SimulationEngine implements IAnimalChosenListener {
         }
     }
 
-    public void start() {
-        loop();
+    public void buttonClicked() {
+        if(this.executor == null || this.executor.isShutdown())
+            this.start();
+        else
+            this.stop();
     }
 
-    private void loop() {
+    private void start() {
         System.out.println("tick");
         try {
             this.simulationTick = new SimulationTick(animals, map, energyHealthyStatus, this.chosenAnimal);
             this.simulationTick.addObserver(this.simulationScene);
+            this.simulationTick.setEngine(this);
             this.executor = Executors.newSingleThreadScheduledExecutor();
 
             this.executor.scheduleAtFixedRate(this.simulationTick, 500, 500, TimeUnit.MILLISECONDS);
@@ -156,6 +172,8 @@ public class SimulationEngine implements IAnimalChosenListener {
 
         this.executor = Executors.newSingleThreadScheduledExecutor();
         this.simulationTick = new SimulationTick(animals, map, energyHealthyStatus, this.chosenAnimal);
+        this.simulationTick.setEngine(this);
+        this.simulationTick.addObserver(this.simulationScene);
         this.executor.scheduleWithFixedDelay(this.simulationTick, 500, 500, TimeUnit.MILLISECONDS);
     }
 
@@ -163,4 +181,21 @@ public class SimulationEngine implements IAnimalChosenListener {
     public IMap getMap() {
         return this.map;
     }
+
+    public void stop() {
+        if(this.executor != null)
+            this.executor.shutdown();
+    }
+
+    public void addDead(Animal dead) {
+
+        this.deads.add(dead.getAge());
+    }
+
+    public SimulationStats getStats() {
+        ArrayList<Animal> animalArrayList = new ArrayList<>(this.animals);
+
+        return new SimulationStats(this.map, animalArrayList, this.deads);
+    }
+
 }

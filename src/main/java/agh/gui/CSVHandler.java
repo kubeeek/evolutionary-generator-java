@@ -8,12 +8,23 @@ import java.io.IOException;
 public class CSVHandler {
 
     String filename;
+    String name;
     private int epoque = 0;
-    public CSVHandler(int simulationCounter){
+    public CSVHandler(String name){
         // Generate a unique filename for the current simulation.
-        this.filename = "src/main/CSVFiles/simulation_" + simulationCounter + ".txt";
+        this.name=name;
+        this.filename = "src/main/resources/" + name + ".csv";
+        File yourFile = new File(filename);
+        try {
+            yourFile.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(name.length()==0){
+            deleteCSV();
+        }
     }
-    private void saveStatisticsToFile(String Animals,String Grass, String freeSpaces,
+    public void saveStatisticsToFile(String Animals,String Grass, String freeSpaces,
                                       String avgEnergy, String avgAge, String genotype) {
         try {
             FileWriter fileWriter = new FileWriter(this.filename, true);
@@ -21,7 +32,7 @@ public class CSVHandler {
 
             // Write the desired statistics to the file in CSV format.
             // For example:
-            bufferedWriter.write("Tura " + epoque + ",");
+            bufferedWriter.write( epoque + ",");
             bufferedWriter.write(Animals + ",");
             bufferedWriter.write(Grass + ",");
             bufferedWriter.write(freeSpaces + ",");

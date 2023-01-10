@@ -2,8 +2,8 @@ package agh;
 
 import agh.simulation.config.SimulationConfigVariant;
 import agh.world.IMap;
+import javafx.scene.paint.Color;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -214,7 +214,7 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
         this.deathDate = day;
     }
 
-    public int getAge() {
+    public synchronized int getAge() {
         return this.age;
     }
 
@@ -249,6 +249,7 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
         this.map.deleteAt(grass.getPosition(), grass);
         this.setEnergy(this.energy + this.energyGainedFromEating);
         this.updateLabelColor();
+        this.addToCountEatenGrass();
     }
 
     @Override
@@ -263,8 +264,10 @@ public class Animal extends AbstractGameObject implements Comparable<Animal> {
             this.colorLabel = Color.GREEN;
         } else if (this.getEnergy() < getEnergyNeededToBorn() && this.getEnergy() >= getEnergyNeededToBorn() / 2) {
             this.colorLabel = Color.YELLOW;
-        } else if (this.getEnergy() < getEnergyNeededToBorn() / 2) {
+        } else if (this.getEnergy() < getEnergyNeededToBorn() / 2 && this.getEnergy()>getEnergyNeededToBorn()/4) {
             this.colorLabel = Color.RED;
+        } else {
+            this.colorLabel = Color.DARKRED;
         }
     }
 

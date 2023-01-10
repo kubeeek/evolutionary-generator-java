@@ -29,20 +29,23 @@ public class ChildMakingResolver {
                     .stream()
                     .filter(e -> e instanceof Animal).map(e -> (Animal) e)
                     .filter(e -> e.getEnergy() >= healthyStatus)
-                    .filter(e -> !visitedAnimals.contains(e))
                     .toList();
 
             if (healthyNeighbours.size() != 0 && healthyNeighbours.size() % 2 == 0) {
                 for (int i = 0; i < healthyNeighbours.size() - 1; i++) {
                     var mom = healthyNeighbours.get(i);
-                    if (visitedAnimals.contains(mom))
-                        continue;
                     var dad = healthyNeighbours.get(i++);
 
+                    if (visitedAnimals.contains(mom) || visitedAnimals.contains(dad))
+                        continue;
+
                     var children = new Animal(mom, dad);
+                    children.addObserver( (IPositionChangeObserver) this.map);
                     this.map.place(children);
+
                     children.addObserver((IPositionChangeObserver) this.map);
                     this.animals.add(children);
+                    
                     this.visitedAnimals.add(mom);
                     this.visitedAnimals.add(dad);
                     this.visitedAnimals.add(children);

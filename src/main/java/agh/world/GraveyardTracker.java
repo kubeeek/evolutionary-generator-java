@@ -3,10 +3,7 @@ package agh.world;
 import agh.Animal;
 import agh.Vector2d;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Collectors;
@@ -53,17 +50,13 @@ public class GraveyardTracker {
     Vector2d getLeastGravePosition() {
         var sorted = this.getLeastGravePositions();
 
-        int i = 0;
-        var object = sorted.get(i);
+        var max = (sorted.size() - 1) * 2/3;
 
-        while (visitedPositions.contains(object) && i + 1 < visitedPositions.size()) {
-            object = sorted.get(i++);
-        }
+        Random random = new Random();
+        var indexFromLowerHalf = random.nextInt(0, max);
 
-        if(visitedPositions.size() == i)
-            visitedPositions.clear();
+        var object = sorted.get(indexFromLowerHalf);
 
-        visitedPositions.add(object);
         return object;
     }
 }

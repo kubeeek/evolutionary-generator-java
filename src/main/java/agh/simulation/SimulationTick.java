@@ -1,6 +1,7 @@
 package agh.simulation;
 
 import agh.Animal;
+import agh.gui.CSVHandler;
 import agh.world.IMap;
 
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -12,6 +13,7 @@ public class SimulationTick implements Runnable {
     private final Animal chosenAnimal;
     CopyOnWriteArrayList<Animal> animals;
     private CopyOnWriteArrayList<ISimulationChange> observers = new CopyOnWriteArrayList<>();
+    private SimulationEngine engine;
 
     SimulationTick(CopyOnWriteArrayList<Animal> animals, IMap map, int healthyStatus, Animal chosenAnimal) {
         this.animals = animals;
@@ -23,9 +25,15 @@ public class SimulationTick implements Runnable {
     public void notifyObservers() {
         for (var observer :
                 observers) {
-            observer.simulationChanged(this.map);
+            observer.simulationChanged(this.map, chosenAnimal);
         }
     }
+
+
+    void setEngine(SimulationEngine engine) {
+        this.engine = engine;
+    }
+
 
     /**
      *
@@ -40,6 +48,7 @@ public class SimulationTick implements Runnable {
                 // skip them if dead
                 if (animal.isDead()) {
                     this.map.deleteAt(animal.getPosition(), animal);
+                    this.engine.addDead(animal);
                     System.out.println("zdech");
                     this.animals.remove(animal);
                     continue;
@@ -50,6 +59,7 @@ public class SimulationTick implements Runnable {
             }
         }
 
+        System.out.println(chosenAnimal);
         // eat
         (new DinnerConflictResolver(map, animals)).resolve();
 

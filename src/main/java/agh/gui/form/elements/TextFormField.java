@@ -22,6 +22,9 @@ public class TextFormField<T> extends FormField {
 
     @Override
     public String getValue() {
+        if(this.formField.getText() == null)
+            return "";
+
         return this.formField.getText();
     }
 }
